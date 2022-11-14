@@ -1,3 +1,6 @@
+/* in file init_paging.c */
+extern void init_paging(void);
+
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
 
