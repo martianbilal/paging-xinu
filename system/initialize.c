@@ -50,6 +50,7 @@ void	nulluser()
 	/* Initialize the system */
 		
 	sysinit();
+	init_paging();
 
 	kprintf("\n\r%s\n\n\r", VERSION);
 	
@@ -111,7 +112,7 @@ void	nulluser()
  */
 static	void	sysinit()
 {
-	int32	i;
+	int32	i, j;
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
 	struct	sentry	*semptr;	/* Ptr to semaphore table entry	*/
 
@@ -145,6 +146,9 @@ static	void	sysinit()
 		prptr->prname[0] = NULLCH;
 		prptr->prstkbase = NULL;
 		prptr->prprio = 0;
+
+		// Initialize the per-process pts
+		for (j=0; j<NPTE; j++) { prptr->pts[j] = NULL; } 
 	}
 
 	/* Initialize the Null process entry */	

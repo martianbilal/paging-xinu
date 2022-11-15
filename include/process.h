@@ -1,5 +1,7 @@
 /* process.h - isbadpid */
 
+#include "paging_info.h"
+
 /* Maximum number of processes in the system */
 
 #ifndef NPROC
@@ -52,6 +54,8 @@ struct procent {		/* Entry in the process table		*/
 	umsg32	prmsg;		/* Message sent to this process		*/
 	bool8	prhasmsg;	/* Nonzero iff msg is valid		*/
 	int16	prdesc[NDESC];	/* Device descriptors for process	*/
+	d_info_t *pd;			/* Pointer to the dtable entry with the page directory of process */
+	d_info_t *pts[NPTE];	/* Pointers to the dtable entries with the page tables of process */
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/

@@ -1,6 +1,31 @@
 /* in file init_paging.c */
 extern void init_paging(void);
 
+/* in file init_paging.c */
+extern void init_paging_structs(void);
+
+/* in file init_paging.c */
+extern void init_nullproc_dtable(void);
+
+/* in file init_paging.c */
+extern void init_nullproc_pd(void);
+
+/* in file init_paging.c */
+extern void init_nullproc_pt(void);
+
+/* in file init_paging.c */
+extern void enable_paging(void);
+
+/* in file init_paging.c */
+extern void print_mem(uint32 *, uint32 *);
+
+/* in file init_paging.c */
+extern void print_dtable(void);
+
+/* in file init_paging.c */
+extern void print_proc_dinfo(pid32);
+
+
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
 
