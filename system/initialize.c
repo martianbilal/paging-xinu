@@ -112,7 +112,7 @@ void	nulluser()
  */
 static	void	sysinit()
 {
-	int32	i, j;
+	int32	i;
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
 	struct	sentry	*semptr;	/* Ptr to semaphore table entry	*/
 
@@ -147,8 +147,9 @@ static	void	sysinit()
 		prptr->prstkbase = NULL;
 		prptr->prprio = 0;
 
-		// Initialize the per-process pts
-		for (j=0; j<NPTE; j++) { prptr->pts[j] = NULL; } 
+		// Initialize the per-process pd, pts
+		prptr->pd = NULL;
+		prptr->pts = NULL;
 	}
 
 	/* Initialize the Null process entry */	

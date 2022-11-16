@@ -2,16 +2,22 @@
 extern void init_paging(void);
 
 /* in file init_paging.c */
+extern void init_globals(void);
+
+/* in file init_paging.c */
 extern void init_paging_structs(void);
 
-/* in file init_paging.c */
-extern void init_nullproc_dtable(void);
+extern void alloc_dtable_pd(pid32);
 
-/* in file init_paging.c */
-extern void init_nullproc_pd(void);
+extern void alloc_dtable_shared_pts(void);
 
-/* in file init_paging.c */
-extern void init_nullproc_pt(void);
+extern d_info_t *new_dtable_entry(pid32, type_t, uint32);
+
+extern d_info_t *get_d_entry(void);
+
+extern void init_shared_pts(void);
+
+extern void init_pd(pid32);
 
 /* in file init_paging.c */
 extern void enable_paging(void);
@@ -23,7 +29,29 @@ extern void print_mem(uint32 *, uint32 *);
 extern void print_dtable(void);
 
 /* in file init_paging.c */
-extern void print_proc_dinfo(pid32);
+extern void print_proc_dinfo(void);
+
+/* in file init_paging.c */
+extern void print_mem_regions(void);
+
+/* in file pt_list.c */
+extern void	print_pts(pid32);
+
+/* in file pt_list.c */
+extern void insert_pt(d_info_t *, pid32);
+
+/* in file pt_list.c */
+extern int isempty_pt(pid32);
+
+/* in file pt_list.c */
+extern pt_info_t *find_pt(d_info_t *, pid32);
+
+/* in file pt_list.c */
+extern void delete_pt(d_info_t *, pid32);
+
+
+
+extern d_info_t *get_d_entry(void);
 
 
 /* in file addargs.c */
