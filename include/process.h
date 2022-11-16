@@ -1,6 +1,6 @@
 /* process.h - isbadpid */
 
-#include "paging_info.h"
+#include "dtable.h"
 #include "pt_list.h"
 
 /* Maximum number of processes in the system */
@@ -55,7 +55,7 @@ struct procent {				/* Entry in the process table		*/
 	umsg32		prmsg;			/* Message sent to this process		*/
 	bool8		prhasmsg;		/* Nonzero iff msg is valid		*/
 	int16		prdesc[NDESC];	/* Device descriptors for process	*/
-	d_info_t 	*pd;			/* Pointer to the dtable entry with the page directory of process */
+	dentry_t 	*pd;			/* Pointer to the dtable entry with the page directory of process */
 	pt_info_t 	*pts;			/* List of dtable entries with the page tables of process */
 };
 

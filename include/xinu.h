@@ -42,3 +42,4 @@
 #include <string.h>
 #include <paging.h>
 #include <page_server.h>
+#include <paging_limits.h>
