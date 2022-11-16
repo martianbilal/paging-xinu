@@ -27,8 +27,8 @@ void init_paging(void){
 	alloc_dtable_pd(currpid);
 	alloc_dtable_shared_pts();
 
-	init_shared_pts();
-	init_pd(currpid);
+	alloc_shared_pts();
+	alloc_common_pd(currpid);
 
 	enable_paging();
 
@@ -121,7 +121,7 @@ d_info_t *get_d_entry(void){
 	return NULL;
 }
 
-void init_shared_pts(void){
+void alloc_shared_pts(void){
 
 	uint32 *entry_addr;
 	uint32 entry_content = 0x0;
@@ -137,7 +137,7 @@ void init_shared_pts(void){
 	}
 }
 
-void init_pd(pid32 pid){
+void alloc_common_pd(pid32 pid){
 
 	uint32 *pd_addr = (uint32 *) proctab[pid].pd->address;
 	*(pd_addr) = (pt_a_addr + pd_lsb12); 						/* mem[PDE_0] = 0x401000 (PT_ABC) */

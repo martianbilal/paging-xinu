@@ -15,9 +15,9 @@ extern d_info_t *new_dtable_entry(pid32, type_t, uint32);
 
 extern d_info_t *get_d_entry(void);
 
-extern void init_shared_pts(void);
+extern void alloc_shared_pts(void);
 
-extern void init_pd(pid32);
+extern void alloc_common_pd(pid32);
 
 /* in file init_paging.c */
 extern void enable_paging(void);
@@ -114,7 +114,7 @@ extern	pid32	create(void *, uint32, pri16, char *, uint32, ...);
 
 /* in file ctxsw.S */
 
-extern	void	ctxsw(void *, void *);
+extern	void	ctxsw(void *, void *, uint32);
 
 /* in file deallocate_bs.c */
 extern	bsd_t	deallocate_bs(bsd_t);

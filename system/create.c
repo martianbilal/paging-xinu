@@ -58,6 +58,10 @@ pid32	create(
 	prptr->prdesc[1] = CONSOLE;
 	prptr->prdesc[2] = CONSOLE;
 
+	/* Set up the pagging per-process bookkeeping information */
+	alloc_dtable_pd(pid);
+	alloc_common_pd(pid);
+
 	/* Initialize stack as if the process was called		*/
 
 	*saddr = STACKMAGIC;

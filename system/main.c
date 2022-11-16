@@ -3,6 +3,8 @@
 #include <xinu.h>
 #include <stdio.h>
 
+static uint32 cr3;
+
 process	main(void)
 {
 
@@ -17,5 +19,12 @@ process	main(void)
 	// Insert test code below
 
 	kprintf("Hello World\n");
+
+// Testing the proc->pd changing
+/*
+	asm("movl %cr3, %eax");
+	asm("movl %eax, cr3");
+	kprintf("0x%x\n",cr3);
+*/	
 	return OK;
 }
