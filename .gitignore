@@ -1,0 +1,4 @@
+compile/.defs
+compile/.vers_num
+compile/version
+compile/xinu.map
