@@ -184,6 +184,10 @@ static	void	sysinit()
 
 	clkinit();
 
+
+	// Set the page fault handler
+	set_evec(14, (uint32)pfdisp);
+
 	for (i = 0; i < NDEVS; i++) {
 		init(i);
 	}

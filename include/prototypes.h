@@ -85,6 +85,14 @@ extern	pri16	chprio(pid32, pri16);
 
 extern	uint32	clkcount(void);
 
+/* in file pfdisp.S */
+
+extern	void	pfdisp(void);
+
+/* in file pfhandler.c */
+
+extern	syscall	pfhandler(void);
+
 /* in file clkhandler.c */
 
 extern	interrupt clkhandler(void);
