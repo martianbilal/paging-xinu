@@ -87,11 +87,11 @@ extern	uint32	clkcount(void);
 
 /* in file pfdisp.S */
 
-extern	void	pfdisp(void);
+extern	void	pgfdisp(void);
 
 /* in file pfhandler.c */
 
-extern	syscall	pfhandler(void);
+extern	syscall	pgfhandler(void);
 
 /* in file clkhandler.c */
 
