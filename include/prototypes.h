@@ -7,31 +7,67 @@ extern void init_globals(void);
 /* in file init_paging.c */
 extern void init_paging_structs(void);
 
+/* in file dtable.c */
 extern void alloc_dtable_pd(pid32);
 
+/* in file dtable.c */
+extern void alloc_dtable_pt(pid32);
+
+/* in file dtable.c */
+extern void dealloc_dtable_pts(pid32);
+
+/* in file dtable.c */
+extern void dealloc_dtable_pd(pid32);
+
+/* in file dtable.c */
 extern void alloc_dtable_shared_pts(void);
 
+/* in file dtable.c */
 extern dentry_t *new_dtable_entry(pid32, type_t, uint32);
 
-extern dentry_t *get_d_entry(void);
+/* in file dtable.c */
+extern dentry_t *get_dentry(void);
 
-extern void alloc_shared_pts(void);
-
-extern void alloc_common_pd(pid32);
-
-/* in file init_paging.c */
-extern void enable_paging(void);
-
-/* in file init_paging.c */
-extern void print_mem(uint32 *, uint32 *);
-
-/* in file init_paging.c */
+/* in file dtable.c */
 extern void print_dtable(void);
 
-/* in file init_paging.c */
-extern void print_proc_dinfo(pid32 pid);
+/* in file dtable.c */
+extern void print_proc_dinfo(pid32);
 
-/* in file init_paging.c */
+/* in file paging.c */
+extern void alloc_shared_pts(void);
+
+/* in file paging.c */
+extern void test_add_pt(pid32, uint32);
+
+/* in file paging.c */
+extern uint32 *get_pt_pde(pid32, uint32);
+
+/* in file paging.c */
+extern int pt_exists(pid32, uint32);
+
+/* in file paging.c */
+extern void alloc_common_pd(pid32);
+
+/* in file paging.c */
+extern void zero_pd_mem(uint32);
+
+/* in file paging.c */
+extern void zero_pt_mem(uint32);
+
+/* in file paging.c */
+extern void dealloc_pts_and_pd(pid32);
+
+/* in file paging.c */
+extern uint32 *add_pd_entry(pid32, uint32);
+
+/* in file paging.c */
+extern void enable_paging(void);
+
+/* in file mem_inspect.c */
+extern void print_mem(uint32 *, uint32 *);
+
+/* in file mem_inspect.c */
 extern void print_mem_regions(void);
 
 /* in file pt_list.c */
@@ -49,10 +85,8 @@ extern pt_info_t *find_pt(dentry_t *, pid32);
 /* in file pt_list.c */
 extern void delete_pt(dentry_t *, pid32);
 
-
-
-extern dentry_t *get_d_entry(void);
-
+/* in file pt_list.c */
+extern void delete_pts(pid32);
 
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);

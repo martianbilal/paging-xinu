@@ -49,3 +49,16 @@ void delete_pt(dentry_t *dentry, pid32 pid) {
 	}    
 	freemem((char *)cur_pt, sizeof(pt_info_t));
 }
+
+void delete_pts(pid32 pid){
+
+	pt_info_t* cur_pt = proctab[pid].pts;
+	pt_info_t* del_pt;
+
+	for (; cur_pt != NULL; ){
+		del_pt = cur_pt;
+		cur_pt = cur_pt->next;
+		freemem((char *)del_pt, sizeof(pt_info_t));
+	}
+	proctab[pid].pts = NULL;
+}
