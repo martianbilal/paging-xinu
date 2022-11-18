@@ -8,6 +8,7 @@
 
 
 uint32 find_free_e1();
+uint32 get_e1_size();
 uint32* find_pte_addr(pid32 pid, uint32 virt_addr);
 uint32 clear_e1_page(uint32 e1_addr);
 
@@ -159,7 +160,8 @@ ret:
 	returns 1 on success, 0 on failure
 */
 int assign_page(pid32 pid, uint32 virt_addr){
-	uint32 e1_addr = find_free_e1();
+	uint32 page_number = (virt_addr >> 12) && 0x3FF;	// page number of the virtual address
+	uint32 e1_addr = alloc_e1table_entry(pid, page_number);
 	uint32 *pte = find_pte_addr(pid, virt_addr);
 
 
@@ -172,9 +174,18 @@ int assign_page(pid32 pid, uint32 virt_addr){
 
 
 uint32 find_free_e1(){
-	
+	int i = 0;
+	// goes throught the E1 and finds the free E1 page
+	for(i = 0; i < get_e1_size(); i++){
+		// if()
+	}
 	return -1;
 }
+
+uint32 get_e1_size(){
+	return 0;
+}
+
 
 uint32* find_pte_addr(pid32 pid, uint32 virt_addr){
 	
