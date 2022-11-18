@@ -20,10 +20,8 @@ process	main(void)
 	// Insert test code below
 
 	kprintf("Hello World\n");
-<<<<<<< HEAD
 	asm("mov $0x1800000, %eax");
 	asm("mov (%eax), %eax");
-=======
 
 // Testing the proc->pd changing
 /*
@@ -53,7 +51,6 @@ process	main(void)
 	//print_proc_einfo(currpid);
 
 
->>>>>>> main
 	return OK;
 }
 
