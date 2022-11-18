@@ -3,6 +3,7 @@
 #include <xinu.h>
 
 int getcr2(void);
+int getcr3(void);
 
 /*-------------------------------------------------------------------------
  * pgfhandler - paging fault handler
@@ -10,9 +11,36 @@ int getcr2(void);
  */
 syscall pgfhandler()
 {
+	struct procent *prptr;
     intmask mask = disable();
+	int virt_addr = getcr2();
+	int not_physical = 0;
 
-    kprintf("Paging fault handler called for address : %x \n", getcr2());
+	int virt_page_dir = virt_addr >> 22;
+	int virt_page_tab = (virt_addr >> 12) & 0x3FF;
+
+
+	prptr = &proctab[currpid];
+
+    kprintf("======= Paging fault handler called ==========\n");
+	kprintf("Virtual address: 0x%x\n", virt_addr);
+	kprintf("Virtual directory: 0x%x\n", virt_page_dir);
+	kprintf("Virtual page table: 0x%x\n", virt_page_tab);
+
+	// TODO : check if the page is not assigned a physical page
+	/*
+		for(int i = 0; i < nframes; i++){
+			if(){
+				not_physical = 1;
+				break;
+			}
+		}
+				not_physical = 1;
+				break;
+			}
+		}
+	
+	*/
 
 
 	// STATWORD ps;
@@ -92,7 +120,13 @@ syscall pgfhandler()
 
 
 int getcr2(){
-	int cr2;
+	int cr2 = 0;
 	asm("movl %%cr2, %0" : "=r"(cr2));
 	return cr2;
+}
+
+int getcr3(){
+	int cr3 = 0;
+	asm("movl %%cr3, %0" : "=r"(cr3));
+	return cr3;
 }

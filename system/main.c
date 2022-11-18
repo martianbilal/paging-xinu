@@ -17,7 +17,7 @@ process	main(void)
 	// Insert test code below
 
 	kprintf("Hello World\n");
-	asm("mov $0x1000000, %eax");
+	asm("mov $0x1800000, %eax");
 	asm("mov (%eax), %eax");
 	return OK;
 }
