@@ -1,16 +1,9 @@
 #include <xinu.h>
 
-void print_pts(pid32 pid) {
-
-	pt_info_t *ptptr;
-	for (ptptr = proctab[pid].pts; ptptr != NULL; ptptr = ptptr->next)
-		kprintf("(address=0x%x) (used_entries=%d)\n", ptptr->d_entry->address, ptptr->d_entry->used_entries);
-}
-
-void insert_pt(d_info_t *d_entry, pid32 pid) {
+void insert_pt(dentry_t *dentry, pid32 pid) {
 	
 	pt_info_t *pt = (pt_info_t*) getmem(sizeof(pt_info_t));
-	pt->d_entry = d_entry;
+	pt->dentry = dentry;
 	pt->next = proctab[pid].pts;
 	proctab[pid].pts = pt;
 }
@@ -19,26 +12,26 @@ int isempty_pt(pid32 pid) {
 	return (proctab[pid].pts == NULL);
 }
 
-pt_info_t *find_pt(d_info_t *d_entry, pid32 pid) {
+pt_info_t *find_pt(dentry_t *dentry, pid32 pid) {
 
 	pt_info_t* pt = proctab[pid].pts;
 
 	if (isempty_pt(pid)) return NULL;
 
-	for (; pt->d_entry != d_entry; pt = pt->next) {
+	for (; pt->dentry != dentry; pt = pt->next) {
 		if (pt->next == NULL) return NULL;
 	}      
 	return pt;
 }
 
-void delete_pt(d_info_t *d_entry, pid32 pid) {
+void delete_pt(dentry_t *dentry, pid32 pid) {
 
 	pt_info_t* cur_pt = proctab[pid].pts;
 	pt_info_t* prev_pt = NULL;
 	
 	if (isempty_pt(pid)) return;
 
-	for (; cur_pt->d_entry != d_entry; prev_pt=cur_pt, cur_pt=cur_pt->next){
+	for (; cur_pt->dentry != dentry; prev_pt=cur_pt, cur_pt=cur_pt->next){
 		if (cur_pt->next == NULL) return;
 	}
 
@@ -48,4 +41,24 @@ void delete_pt(d_info_t *d_entry, pid32 pid) {
 		prev_pt->next = cur_pt->next;
 	}    
 	freemem((char *)cur_pt, sizeof(pt_info_t));
+}
+
+void delete_pts(pid32 pid){
+
+	pt_info_t* cur_pt = proctab[pid].pts;
+	pt_info_t* del_pt;
+
+	for (; cur_pt != NULL; ){
+		del_pt = cur_pt;
+		cur_pt = cur_pt->next;
+		freemem((char *)del_pt, sizeof(pt_info_t));
+	}
+	proctab[pid].pts = NULL;
+}
+
+void print_pts(pid32 pid) {
+
+	pt_info_t *ptptr;
+	for (ptptr = proctab[pid].pts; ptptr != NULL; ptptr = ptptr->next)
+		kprintf("(address=0x%x) (used_entries=%d)\n", ptptr->dentry->address, ptptr->dentry->used_entries);
 }
