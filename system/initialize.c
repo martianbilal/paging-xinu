@@ -153,8 +153,8 @@ static	void	sysinit()
 
 		// Initialize the per-process virtual address space
 		for (j = 0; j < NPROCPAGE; j++){
-			prptr->pages[j].loc = empty;
-			prptr->pages[j].eentry = NULL;
+			prptr->ptable[j].loc = empty;
+			prptr->ptable[j].eentry = NULL;
 		}
 	}
 

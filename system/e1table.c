@@ -5,8 +5,8 @@ status alloc_e1table_entry(pid32 pid, uint32 page_number){
 
 	eentry_t *e1entry = new_e1table_entry(pid, page_number);
 	if (e1entry == NULL) return SYSERR;
-	proctab[pid].pages[page_number].loc = e1;
-	proctab[pid].pages[page_number].eentry = e1entry;
+	proctab[pid].ptable[page_number].loc = e1;
+	proctab[pid].ptable[page_number].eentry = e1entry;
 	return OK;
 }
 
@@ -51,6 +51,6 @@ void print_proc_einfo(pid32 pid){
 	kprintf("Per-process Virtual Address Space:\n");
 	int i;
 	for (i = 0; i < NPROCPAGE; i++){
-		kprintf("ptable[%d] (location=%d) (address=0x%x)\n", i, prptr->pages[i].loc, (!prptr->pages[i].loc) ? -1 : prptr->pages[i].eentry->address);
+		kprintf("ptable[%d] (location=%d) (address=0x%x)\n", i, prptr->ptable[i].loc, (!prptr->ptable[i].loc) ? -1 : prptr->ptable[i].eentry->address);
 	}
 }
