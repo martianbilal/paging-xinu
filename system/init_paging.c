@@ -9,7 +9,8 @@ uint32 pd_n_addr;
 uint32 pt_a_addr, pt_g_addr, pt_m_addr;
 
 dentry_t dtable[NDFRAME];
-
+eentry_t e1table[NE1FRAME];
+eentry_t e2table[NE2FRAME];
 
 void init_paging(void){
 
@@ -62,21 +63,23 @@ void init_globals(void){
 
 void init_paging_structs(void){
 
-	/* Initialize d_table */
 	int i;
+	/* Initialize dtable */
 	for (i = 0; i < NDFRAME; i++) {
 		dtable[i].pid = -1;
 		dtable[i].used_entries = 0;
 		dtable[i].address = (d_addr + (i*FRAME_SIZE));
 	}
-}
-
-/* add dtable? pd pts new proc
-void update_dtable(pid32 pid){
-
-	int i;
-	for (i=1; i<6; ++i){
-		insert_pt(new_dtable_entry(pid, pt, 1024), pid);
+	/* Initialize e1table */
+	for (i = 0; i < NE1FRAME; i++) {
+		e1table[i].pid = -1;
+		e1table[i].page_number = -1;
+		e1table[i].address = (e1_addr + (i*FRAME_SIZE));
+	}
+	/* Initialize e1table */
+	for (i = 0; i < NE2FRAME; i++) {
+		e2table[i].pid = -1;
+		e2table[i].page_number = -1;
+		e2table[i].address = (e2_addr + (i*FRAME_SIZE));
 	}
 }
-*/

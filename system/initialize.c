@@ -112,7 +112,7 @@ void	nulluser()
  */
 static	void	sysinit()
 {
-	int32	i;
+	int32	i, j;
 	struct	procent	*prptr;		/* Ptr to process table entry	*/
 	struct	sentry	*semptr;	/* Ptr to semaphore table entry	*/
 
@@ -150,6 +150,12 @@ static	void	sysinit()
 		// Initialize the per-process pd, pts
 		prptr->pd = NULL;
 		prptr->pts = NULL;
+
+		// Initialize the per-process virtual address space
+		for (j = 0; j < NPROCPAGE; j++){
+			prptr->pages[j].loc = empty;
+			prptr->pages[j].eentry = NULL;
+		}
 	}
 
 	/* Initialize the Null process entry */	

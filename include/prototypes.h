@@ -1,3 +1,15 @@
+/* in file main.c */
+extern void sndA(void);
+
+/* in file vmhgetmem.c */
+extern char *vmhgetmem(uint16);
+
+/* in file vmhgetmem.c */
+extern uint32 get_va(uint32);
+
+/* in file vmhfreemem.c */
+extern syscall vmhfreemem(char *, uint16);
+
 /* in file init_paging.c */
 extern void init_paging(void);
 
@@ -33,6 +45,24 @@ extern void print_dtable(void);
 
 /* in file dtable.c */
 extern void print_proc_dinfo(pid32);
+
+/* in file e1table.c */
+extern status alloc_e1table_entry(pid32, uint32);
+
+/* in file e1table.c */
+extern eentry_t *new_e1table_entry(pid32, uint32);
+
+/* in file e1table.c */
+extern eentry_t *get_e1entry(void);
+
+/* in file e1table.c */
+extern void print_e1table(void);
+
+/* in file e1table.c */
+extern void print_proc_einfo(pid32);
+
+/* in file ptable.c */
+extern uint32 alloc_ptable_pages(pid32, uint16);
 
 /* in file paging.c */
 extern void alloc_shared_pts(void);

@@ -35,11 +35,28 @@ process	main(void)
 	//test_alloc_pt(currpid, 0x14FC000);
 	//test_alloc_pt(currpid, 0x15FC000);
 	//dealloc_pts_and_pd(currpid);
+	//resume(create(sndA, 1024, 20, "sndA", 0, NULL));
 	//print_mem((uint32 *)pd_n_addr, (uint32 *)0x40b000);
 	//print_mem_regions();
 	//print_dtable();
 	//print_proc_dinfo(currpid);
 
+	//alloc_e1table_entry(currpid, 0);
+	//alloc_e1table_entry(currpid, 499);
+	//kprintf("page: %d\n", alloc_ptable_pages(currpid, 524));
+	//kprintf("page: %d\n", alloc_ptable_pages(currpid, 10));
+	//print_e1table();
+	//print_proc_einfo(currpid);
+
 
 	return OK;
+}
+
+
+void sndA(void){
+
+	kprintf("SndA\n");
+	asm("movl %cr3, %eax");
+	asm("movl %eax, cr3");
+	kprintf("0x%x\n",cr3);
 }

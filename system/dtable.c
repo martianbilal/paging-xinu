@@ -34,11 +34,11 @@ void dealloc_dtable_pd(pid32 pid){
 
 dentry_t *new_dtable_entry(pid32 pid, type_t type, uint32 used_entries){
 
-	dentry_t *d_entry = get_dentry();
-	d_entry->pid = pid;
-	d_entry->type = type;
-	d_entry->used_entries = used_entries;
-	return d_entry;
+	dentry_t *dentry = get_dentry();
+	dentry->pid = pid;
+	dentry->type = type;
+	dentry->used_entries = used_entries;
+	return dentry;
 }
 
 dentry_t *get_dentry(void){

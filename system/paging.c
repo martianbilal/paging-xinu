@@ -80,6 +80,7 @@ void zero_pt_mem(uint32 pt_addr){
 }
 
 /* Deallocating the private page tables and directory of a process and update the dtable */
+/* To be called on process exit */
 void dealloc_pts_and_pd(pid32 pid){
 
 	dealloc_dtable_pts(pid);

@@ -1,7 +1,10 @@
 /* process.h - isbadpid */
 
 #include "dtable.h"
+#include "etable.h"
+#include "ptable.h"
 #include "pt_list.h"
+#include "paging_limits.h"
 
 /* Maximum number of processes in the system */
 
@@ -43,20 +46,21 @@
 
 /* Definition of the process table (multiple of 32 bits) */
 
-struct procent {				/* Entry in the process table		*/
-	uint16		prstate;		/* Process state: PR_CURR, etc.		*/
-	pri16		prprio;			/* Process priority			*/
-	char		*prstkptr;		/* Saved stack pointer			*/
-	char		*prstkbase;		/* Base of run time stack		*/
-	uint32		prstklen;		/* Stack length in bytes		*/
-	char		prname[PNMLEN];	/* Process name				*/
-	uint32		prsem;			/* Semaphore on which process waits	*/
-	pid32		prparent;		/* ID of the creating process		*/
-	umsg32		prmsg;			/* Message sent to this process		*/
-	bool8		prhasmsg;		/* Nonzero iff msg is valid		*/
-	int16		prdesc[NDESC];	/* Device descriptors for process	*/
-	dentry_t 	*pd;			/* Pointer to the dtable entry with the page directory of process */
-	pt_info_t 	*pts;			/* List of dtable entries with the page tables of process */
+struct procent {					/* Entry in the process table		*/
+	uint16		prstate;			/* Process state: PR_CURR, etc.		*/
+	pri16		prprio;				/* Process priority			*/
+	char		*prstkptr;			/* Saved stack pointer			*/
+	char		*prstkbase;			/* Base of run time stack		*/
+	uint32		prstklen;			/* Stack length in bytes		*/
+	char		prname[PNMLEN];		/* Process name				*/
+	uint32		prsem;				/* Semaphore on which process waits	*/
+	pid32		prparent;			/* ID of the creating process		*/
+	umsg32		prmsg;				/* Message sent to this process		*/
+	bool8		prhasmsg;			/* Nonzero iff msg is valid		*/
+	int16		prdesc[NDESC];		/* Device descriptors for process	*/
+	dentry_t 	*pd;				/* Pointer to the dtable entry with the page directory of process */
+	pt_info_t 	*pts;				/* List of dtable entries with the page tables of process */
+	pentry_t	pages[NPROCPAGE];	/* The per-process virtual address space */
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/
