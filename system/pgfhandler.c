@@ -2,6 +2,19 @@
 
 #include <xinu.h>
 
+
+// static uint32 cr3;
+// static uint32 cr2;
+
+
+uint32 find_free_e1();
+uint32* find_pte_addr(pid32 pid, uint32 virt_addr);
+uint32 clear_e1_page(uint32 e1_addr);
+
+int assigned_physical(uint32 virt_addr);
+int pde_present(pid32 pid, uint32 virt_addr);
+int assign_page(pid32 pid, uint32 virt_addr);
+
 int getcr2(void);
 int getcr3(void);
 
@@ -13,11 +26,11 @@ syscall pgfhandler()
 {
 	struct procent *prptr;
     intmask mask = disable();
-	int virt_addr = getcr2();
-	int not_physical = 0;
+	uint32 virt_addr = getcr2();
+	// int pf_not_physical = 0;
 
-	int virt_page_dir = virt_addr >> 22;
-	int virt_page_tab = (virt_addr >> 12) & 0x3FF;
+	uint32 virt_page_dir = virt_addr >> 22;
+	uint32 virt_page_tab = (virt_addr >> 12) & 0x3FF;
 
 
 	prptr = &proctab[currpid];
@@ -28,9 +41,31 @@ syscall pgfhandler()
 	kprintf("Virtual page table: 0x%x\n", virt_page_tab);
 
 	// TODO : check if the page is not assigned a physical page
+
+	if(!pde_present(currpid, virt_addr)){
+		kprintf("pid %d does not have address\n", currpid, virt_addr);
+		goto ret;
+	}
+	if(!assigned_physical(virt_addr)){
+		// kprintf("Page not assigned a physical page\n");
+		// TODO : for part 2, check if E1 and E2 both are full and then queue the process
+		// if(e1_full()){
+		// 	// nothing to do right now
+		// }
+		// TODO : check if only E1 is full, call swap
+		// TODO : assign the physical page to the faulting address
+		if (assign_page(currpid, virt_addr)){
+			kprintf("Page assigned\n");
+		}
+		else{
+			kprintf("Page not assigned\n");
+			goto ret;
+		}
+		// TODO : check if the page has moved to the backing store
+	}
 	/*
-		for(int i = 0; i < nframes; i++){
-			if(){
+		for(int i = 0; i < list.size; i++){
+			if(not_physical[i] == virt_addr){
 				not_physical = 1;
 				break;
 			}
@@ -112,16 +147,72 @@ syscall pgfhandler()
 
 	// pte->pt_pres = 1;	/* page is present */
 	// pte->pt_base = FRAME0 + freefrm;
+
+ret:
 	restore(mask);
 	return OK;
 	
 }
+
+/*
+	assign_page - assign a physical page to the virtual address
+	returns 1 on success, 0 on failure
+*/
+int assign_page(pid32 pid, uint32 virt_addr){
+	uint32 e1_addr = find_free_e1();
+	uint32 *pte = find_pte_addr(pid, virt_addr);
+
+
+	clear_e1_page(e1_addr);
+
+	*pte = e1_addr + pd_lsb12;
+	
+	return 0;
+}
+
+
+uint32 find_free_e1(){
+	
+	return -1;
+}
+
+uint32* find_pte_addr(pid32 pid, uint32 virt_addr){
+	
+	return (uint32*)(-1);
+}
+
+uint32 clear_e1_page(uint32 e1_addr){
+	
+	return -1;
+}
+
+/*
+	pde_present - checks if the page table is present for this address
+	returns 1 yes, 0 otherwise 
+*/
+int pde_present(pid32 pid, uint32 virt_addr){
+	return 0;
+}
+
+
+
+
+/*
+	assigned_physical - check if the page is assigned a physical page
+	returns 0 if not assigned a physical page, 1 otherwise
+*/
+int assigned_physical(uint32 virt_addr){
+	return 0;
+}
+
 
 
 
 int getcr2(){
 	int cr2 = 0;
 	asm("movl %%cr2, %0" : "=r"(cr2));
+	// asm("movl %cr3, %eax");
+	// asm("movl %eax, cr2");
 	return cr2;
 }
 
