@@ -13,11 +13,11 @@ uint32 alloc_ptable_pages(pid32 pid, uint16 num){
 	page_number = 0;
 
 	for (i = 0; i < MAXHSIZE; i++){
-		if (prptr->pages[i].loc == empty){
+		if (prptr->ptable[i].loc == empty){
 			counter++;
 			if (counter == num){
 				for (j = page_number; j <= i; j++){
-					prptr->pages[j].loc = vmem;
+					prptr->ptable[j].loc = vmem;
 				}
 				return page_number;
 			}

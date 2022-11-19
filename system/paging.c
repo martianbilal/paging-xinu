@@ -34,20 +34,20 @@ void test_alloc_pt(pid32 pid, uint32 p_addr){
 	alloc_dtable_pt(pid); // Allocate the a new entry in the dtable for the new page table
 	uint32 pt_addr = proctab[pid].pts->dentry->address;
 	zero_pt_mem(pt_addr);
-	*(get_pt_pde(pid, p_addr)) = (pt_addr + pd_lsb12);
+	*((uint32 *)get_pt_pde(pid, p_addr)) = (pt_addr + pd_lsb12);
 }
 
 /* Check if there is already a pde for the page table corresponding to the given page */
 int pt_exists(pid32 pid, uint32 p_addr){
-
-	return (*(get_pt_pde(pid, p_addr))&0x1);
+			
+	return (*((uint32 *)get_pt_pde(pid, p_addr))&0x1);
 }
 
 /* Takes a page and returns the address of the pde that corresponds to that page's page table */
-uint32 *get_pt_pde(pid32 pid, uint32 p_addr){
+uint32 get_pt_pde(pid32 pid, uint32 p_addr){
 
 	uint32 pd_addr = proctab[pid].pd->address;
-	return	((uint32 *)(pd_addr + ((p_addr>>22)*4)));
+	return	(pd_addr + ((p_addr>>22)*4));
 }
 
 /* Allocate the page directory and fill the first 5 pdes related to the shared page tables */
@@ -79,6 +79,26 @@ void zero_pt_mem(uint32 pt_addr){
 		*((uint32 *)pt_addr) = 0x0;
 }
 
+//100   1111111111 000000000000
+//pde	pte		   page_offset
+//4		1023	
+//11111111111111111111000000000000 = 0xFFFFF000
+// pde_main = curr.pd+(4*pde)
+// *(pde_main) = pt_main+pt_lsb12
+// pt_main = *(pde_main)&0xFFFFF000
+// *(pt_main+4*pte) = 0x0
+
+/* Set to zero the pte that corresponds to the given page */
+void zero_pte(pid32 pid, uint32 p_addr){
+
+	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
+	pt_base_addr = pt_base_addr&0xFFFFF000; //clean lsb12 flag
+	//kprintf("ad: 0x%x\n", (pt_base_addr + get_pte(p_addr)*4));
+	//kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
+	*((uint32 *)(pt_base_addr + get_pte(p_addr)*4)) = 0x0;
+	//kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
+}
+
 /* Deallocating the private page tables and directory of a process and update the dtable */
 /* To be called on process exit */
 void dealloc_pts_and_pd(pid32 pid){
@@ -97,4 +117,45 @@ void enable_paging(void){
 	asm("movl %cr0, %eax");
 	asm("orl $0x80000000, %eax");
 	asm("movl %eax, %cr0");
+}
+
+
+// 1000111111 (1111111111) 000000000000
+// 1111111111110000000000
+// 0000000000001111111111
+
+int is_valid_va(char *blockaddr){
+
+	return (is_valid_pt(blockaddr));
+}
+
+int is_valid_pt(char *blockaddr){
+
+	uint32 pde = get_pde((uint32) blockaddr);
+	return (pde == 4);
+	//return ((pt_number>=4) && (pt_number<=575));
+}
+
+/*
+// may be unnecessary
+int is_valid_pte(char *blockaddr){
+
+	uint32 pte = get_pte((uint32) blockaddr);
+	return ((pte >= 0) && (pte <= 1023));
+}
+*/
+
+uint32 get_pde(uint32 blockaddr){
+
+	return (blockaddr>>0x16);
+}
+
+uint32 get_pte(uint32 blockaddr){
+
+	return ((blockaddr>>0xC)&0x3FF);
+}
+
+uint32 get_va(uint32 page_number){
+
+	return (f_addr + page_number*FRAME_SIZE);
 }

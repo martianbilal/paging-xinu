@@ -50,7 +50,29 @@ process	main(void)
 	//print_e1table();
 	//print_proc_einfo(currpid);
 
-
+/*
+	char *x = vmhgetmem(2);
+	alloc_e1table_entry(currpid, 0);
+	alloc_e1table_entry(currpid, 1);
+	print_proc_einfo(currpid);
+	char *y = vmhgetmem(2);
+	alloc_e1table_entry(currpid, 2);
+	alloc_e1table_entry(currpid, 3);
+	print_proc_einfo(currpid);
+	vmhfreemem(x, 4);
+	kprintf("%d\n",vmhfreemem(y, 2));
+	print_proc_einfo(currpid);
+*/
+/*	
+	kprintf("Before\n");
+	print_dtable();
+	print_e1table();
+	resume(create(sndA, 1024, 20, "sndA", 0, NULL));
+	sleep(2);
+	kprintf("After\n");
+	print_dtable();
+	print_e1table();
+*/
 	return OK;
 }
 
@@ -58,7 +80,13 @@ process	main(void)
 void sndA(void){
 
 	kprintf("SndA\n");
+/*	
 	asm("movl %cr3, %eax");
 	asm("movl %eax, cr3");
 	kprintf("0x%x\n",cr3);
+*/
+/*	
+	print_dtable();
+	print_e1table();
+*/
 }

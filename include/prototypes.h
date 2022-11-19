@@ -4,9 +4,6 @@ extern void sndA(void);
 /* in file vmhgetmem.c */
 extern char *vmhgetmem(uint16);
 
-/* in file vmhgetmem.c */
-extern uint32 get_va(uint32);
-
 /* in file vmhfreemem.c */
 extern syscall vmhfreemem(char *, uint16);
 
@@ -46,6 +43,15 @@ extern void print_dtable(void);
 /* in file dtable.c */
 extern void print_proc_dinfo(pid32);
 
+/* in file dtable.c */
+extern void dealloc_dtable(pid32);
+
+/* in file dtable.c */
+extern void dealloc_e1table(pid32);
+
+/* in file e1table.c */
+extern void dealloc_e1table_entry(eentry_t *);
+
 /* in file e1table.c */
 extern status alloc_e1table_entry(pid32, uint32);
 
@@ -71,7 +77,10 @@ extern void alloc_shared_pts(void);
 extern void test_add_pt(pid32, uint32);
 
 /* in file paging.c */
-extern uint32 *get_pt_pde(pid32, uint32);
+extern uint32 get_pt_pde(pid32, uint32);
+
+/* in file paging.c */
+extern void test_alloc_pt(pid32, uint32);
 
 /* in file paging.c */
 extern int pt_exists(pid32, uint32);
@@ -93,6 +102,26 @@ extern uint32 *add_pd_entry(pid32, uint32);
 
 /* in file paging.c */
 extern void enable_paging(void);
+
+/* in file paging.c */
+extern void zero_pte(pid32, uint32);
+
+/* in file paging.c */
+extern int is_valid_va(char *);
+
+/* in file paging.c */
+extern int is_valid_pt(char *);
+
+//extern int is_valid_pte(char *blockaddr)
+
+/* in file paging.c */
+extern uint32 get_pde(uint32);
+
+/* in file paging.c */
+extern uint32 get_pte(uint32);
+
+/* in file paging.c */
+extern uint32 get_va(uint32);
 
 /* in file mem_inspect.c */
 extern void print_mem(uint32 *, uint32 *);

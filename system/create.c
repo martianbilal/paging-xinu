@@ -58,6 +58,16 @@ pid32	create(
 	prptr->prdesc[1] = CONSOLE;
 	prptr->prdesc[2] = CONSOLE;
 
+	// Initialize the per-process pd, pts
+	prptr->pd = NULL;
+	prptr->pts = NULL;
+
+	// Initialize the per-process virtual address space
+	for (i = 0; i < NPROCPAGE; i++){
+		prptr->ptable[i].loc = empty;
+		prptr->ptable[i].eentry = NULL;
+	}
+
 	/* Set up the pagging per-process bookkeeping information */
 	alloc_dtable_pd(pid);
 	alloc_common_pd(pid);

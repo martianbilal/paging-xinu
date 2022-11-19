@@ -60,7 +60,7 @@ struct procent {					/* Entry in the process table		*/
 	int16		prdesc[NDESC];		/* Device descriptors for process	*/
 	dentry_t 	*pd;				/* Pointer to the dtable entry with the page directory of process */
 	pt_info_t 	*pts;				/* List of dtable entries with the page tables of process */
-	pentry_t	pages[NPROCPAGE];	/* The per-process virtual address space */
+	pentry_t	ptable[NPROCPAGE];	/* The per-process virtual address space */
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/

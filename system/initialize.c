@@ -146,16 +146,6 @@ static	void	sysinit()
 		prptr->prname[0] = NULLCH;
 		prptr->prstkbase = NULL;
 		prptr->prprio = 0;
-
-		// Initialize the per-process pd, pts
-		prptr->pd = NULL;
-		prptr->pts = NULL;
-
-		// Initialize the per-process virtual address space
-		for (j = 0; j < NPROCPAGE; j++){
-			prptr->pages[j].loc = empty;
-			prptr->pages[j].eentry = NULL;
-		}
 	}
 
 	/* Initialize the Null process entry */	
@@ -169,6 +159,16 @@ static	void	sysinit()
 	prptr->prstkptr = 0;
 	currpid = NULLPROC;
 	
+	/* Initialize the Null process pd, pts */
+	prptr->pd = NULL;
+	prptr->pts = NULL;
+
+	/* Initialize the Null process ptable*/
+	for (i = 0; i < NPROCPAGE; i++){
+		prptr->ptable[i].loc = empty;
+		prptr->ptable[i].eentry = NULL;
+	}
+
 	/* Initialize semaphores */
 
 	for (i = 0; i < NSEM; i++) {
