@@ -175,7 +175,7 @@ int assign_page(pid32 pid, uint32 virt_addr){
 
 uint32 find_free_e1(){
 	int i = 0;
-	// goes throught the E1 and finds the free E1 page
+	// goes through the E1 and finds the free E1 page
 	for(i = 0; i < get_e1_size(); i++){
 		// if()
 	}
