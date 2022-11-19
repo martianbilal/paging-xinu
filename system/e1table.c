@@ -1,5 +1,11 @@
 #include <xinu.h>
 
+void dealloc_e1table_entry(eentry_t *eentry){
+
+	eentry->pid = -1;
+	eentry->page_number = -1;
+}
+
 /* Searches for an empty entry in e1table, and finds one, it allocates it and updates the per-process ptable */
 status alloc_e1table_entry(pid32 pid, uint32 page_number){
 

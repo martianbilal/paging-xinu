@@ -48,7 +48,20 @@ process	main(void)
 	//print_e1table();
 	//print_proc_einfo(currpid);
 
-
+/*
+	char *x = vmhgetmem(2);
+	alloc_e1table_entry(currpid, 0);
+	alloc_e1table_entry(currpid, 1);
+	print_proc_einfo(currpid);
+	char *y = vmhgetmem(2);
+	alloc_e1table_entry(currpid, 2);
+	alloc_e1table_entry(currpid, 3);
+	print_proc_einfo(currpid);
+	vmhfreemem(x, 4);
+	kprintf("%d\n",vmhfreemem(y, 2));
+	print_proc_einfo(currpid);
+*/
+	
 	return OK;
 }
 
