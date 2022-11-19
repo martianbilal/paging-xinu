@@ -32,6 +32,17 @@ void dealloc_dtable_pd(pid32 pid){
 	proctab[pid].pd->pid = -1;
 }
 
+void dealloc_dtable(pid32 pid){
+
+	int i;
+	for (i = 0; i < NDFRAME; i++){
+		if(dtable[i].pid == pid){
+			dtable[i].pid = -1;
+			dtable[i].used_entries = 0;
+		}	
+	}
+}
+
 dentry_t *new_dtable_entry(pid32 pid, type_t type, uint32 used_entries){
 
 	dentry_t *dentry = get_dentry();

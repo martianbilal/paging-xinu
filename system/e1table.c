@@ -1,5 +1,15 @@
 #include <xinu.h>
 
+void dealloc_e1table(pid32 pid){
+
+	int i;
+	for (i = 0; i < NE1FRAME; i++){
+		if (e1table[i].pid == pid){
+			dealloc_e1table_entry(&e1table[i]);
+		}	
+	}
+}
+
 void dealloc_e1table_entry(eentry_t *eentry){
 
 	eentry->pid = -1;

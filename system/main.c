@@ -61,7 +61,16 @@ process	main(void)
 	kprintf("%d\n",vmhfreemem(y, 2));
 	print_proc_einfo(currpid);
 */
-	
+/*	
+	kprintf("Before\n");
+	print_dtable();
+	print_e1table();
+	resume(create(sndA, 1024, 20, "sndA", 0, NULL));
+	sleep(2);
+	kprintf("After\n");
+	print_dtable();
+	print_e1table();
+*/
 	return OK;
 }
 
@@ -69,7 +78,13 @@ process	main(void)
 void sndA(void){
 
 	kprintf("SndA\n");
+/*	
 	asm("movl %cr3, %eax");
 	asm("movl %eax, cr3");
 	kprintf("0x%x\n",cr3);
+*/
+/*	
+	print_dtable();
+	print_e1table();
+*/
 }

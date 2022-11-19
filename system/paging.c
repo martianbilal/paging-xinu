@@ -93,10 +93,10 @@ void zero_pte(pid32 pid, uint32 p_addr){
 
 	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
 	pt_base_addr = pt_base_addr&0xFFFFF000; //clean lsb12 flag
-	kprintf("ad: 0x%x\n", (pt_base_addr + get_pte(p_addr)*4));
-	kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
+	//kprintf("ad: 0x%x\n", (pt_base_addr + get_pte(p_addr)*4));
+	//kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
 	*((uint32 *)(pt_base_addr + get_pte(p_addr)*4)) = 0x0;
-	kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
+	//kprintf("content: 0x%x\n", *((uint32 *)(pt_base_addr + get_pte(p_addr)*4)));
 }
 
 /* Deallocating the private page tables and directory of a process and update the dtable */

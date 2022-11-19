@@ -43,6 +43,12 @@ extern void print_dtable(void);
 /* in file dtable.c */
 extern void print_proc_dinfo(pid32);
 
+/* in file dtable.c */
+extern void dealloc_dtable(pid32);
+
+/* in file dtable.c */
+extern void dealloc_e1table(pid32);
+
 /* in file e1table.c */
 extern void dealloc_e1table_entry(eentry_t *);
 
