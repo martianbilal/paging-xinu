@@ -8,7 +8,7 @@ syscall vmhfreemem(char *blockaddr, uint16 msize){
 
 	uint32 start_page = get_pte((uint32)blockaddr);
 	uint32 end_page = start_page + msize;
-	if (end_page > 1023) return SYSERR;
+	if (end_page > 1024) return SYSERR;
 
 	uint32 cur_page;
 	loc_t loc;

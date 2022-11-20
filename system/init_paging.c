@@ -12,6 +12,7 @@ dentry_t dtable[NDFRAME];
 eentry_t e1table[NE1FRAME];
 eentry_t e2table[NE2FRAME];
 
+/* Initilizes the paging mechanism in Xinu */
 void init_paging(void){
 
 	
@@ -28,6 +29,7 @@ void init_paging(void){
 	enable_paging();
 }
 
+/* Initializes several globals that are used for debugging and global data structures initialization */
 void init_globals(void){
 
 	a_addr = 0x000000;
@@ -55,6 +57,7 @@ void init_globals(void){
 	pt_m_addr = pd_n_addr + 6*FRAME_SIZE;	
 }
 
+/* Initialize the global paging bookkeeping data structures */
 void init_paging_structs(void){
 
 	int i;

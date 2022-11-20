@@ -171,16 +171,19 @@ int is_valid_pt(uint32 p_addr){
 	return (pde == 4);
 }
 
+/* Returns the page directory entry number that points to the page table of the given page address */
 uint32 get_pde(uint32 p_addr){
 
 	return (p_addr>>0x16);
 }
 
+/* Returns the page table entry number that points to the given page address */
 uint32 get_pte(uint32 p_addr){
 
 	return ((p_addr>>0xC)&0x3FF);
 }
 
+/* Returns the virtual address that corresponds to the given page number of region F */
 uint32 get_va(uint32 page_number){
 
 	return (f_addr + page_number*FRAME_SIZE);
