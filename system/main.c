@@ -8,6 +8,7 @@ extern uint32 pd_n_addr;
 
 process	main(void)
 {
+	int i = 0;
 
 	/* Start the network */
 	/* DO NOT REMOVE OR COMMENT THIS CALL */
@@ -20,8 +21,39 @@ process	main(void)
 	// Insert test code below
 
 	kprintf("Hello World\n");
-	asm("mov $0x1800000, %eax");
-	asm("mov (%eax), %eax");
+	char *x = vmhgetmem(3);
+	char *y = x + 4097;
+	// kprintf("Address for x : %x\n", x);
+	// *x = 'a';
+	// kprintf("Value of x : %d\n", *x);
+	// *x = 'a';
+	
+
+	// kprintf("2nd : Value of x : %d\n", *x);
+
+	// kprintf("Address for y : %x\n", y);
+	// *y = 'a';
+	// // *y = 'a';
+
+	// kprintf("Value of y : %d\n", *y);
+
+
+	for(i = 0; i < (4096 * 2); i++) {
+		*(x + i) = 'a';
+		if(*(x + i) != 'a') {
+			kprintf("Error at %d\n", i);
+			break;
+		}
+		kprintf("Value of x + %d : %d\n",i , *x);
+	}
+
+	// for(i = 0; i < (10 * 2); i++) {
+	// 	*(x + i) = 'a';
+	// 	kprintf("Value of x + %d : %d\n",i , *x);
+	// }
+
+	// asm("mov $0x1800000, %eax");
+	// asm("mov (%eax), %eax");
 
 // Testing the proc->pd changing
 /*

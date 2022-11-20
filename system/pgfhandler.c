@@ -9,8 +9,8 @@
 
 uint32 find_free_e1();
 uint32 get_e1_size();
-uint32* find_pte_addr(pid32 pid, uint32 virt_addr);
-uint32 clear_e1_page(uint32 e1_addr);
+uint32 find_pte_addr(pid32 pid, uint32 virt_addr);
+status clear_e1_page(uint32 e1_addr);
 
 int assigned_physical(uint32 virt_addr);
 int pde_present(pid32 pid, uint32 virt_addr);
@@ -30,16 +30,18 @@ syscall pgfhandler()
 	uint32 virt_addr = getcr2();
 	// int pf_not_physical = 0;
 
-	uint32 virt_page_dir = virt_addr >> 22;
 	uint32 virt_page_tab = (virt_addr >> 12) & 0x3FF;
-
+	uint32 virt_page_dir = virt_addr >> 22;
 
 	prptr = &proctab[currpid];
 
     kprintf("======= Paging fault handler called ==========\n");
+	kprintf("EIP : 0x%x\n", instr);
 	kprintf("Virtual address: 0x%x\n", virt_addr);
-	kprintf("Virtual directory: 0x%x\n", virt_page_dir);
-	kprintf("Virtual page table: 0x%x\n", virt_page_tab);
+	kprintf("Virtual directory number: 0x%x\n", virt_page_dir);
+	kprintf("Virtual page table number: 0x%x\n", virt_page_tab);
+
+	kprintf("%s, ", __func__);
 
 	// TODO : check if the page is not assigned a physical page
 
@@ -151,7 +153,7 @@ syscall pgfhandler()
 
 ret:
 	restore(mask);
-	return OK;
+	return;
 	
 }
 
@@ -159,17 +161,39 @@ ret:
 	assign_page - assign a physical page to the virtual address
 	returns 1 on success, 0 on failure
 */
-int assign_page(pid32 pid, uint32 virt_addr){
-	uint32 page_number = (virt_addr >> 12) && 0x3FF;	// page number of the virtual address
-	uint32 e1_addr = alloc_e1table_entry(pid, page_number);
-	uint32 *pte = find_pte_addr(pid, virt_addr);
+status assign_page(pid32 pid, uint32 virt_addr){
+	uint32 page_number = (virt_addr >> 12) & 0x3FF;	// page number of the virtual address
 
-
-	clear_e1_page(e1_addr);
-
-	*pte = e1_addr + pd_lsb12;
+	kprintf("%s[0x%x, 0x%x], ", __func__, virt_addr, page_number);
 	
-	return 0;
+
+
+	kprintf("allocating the page with page number %d\n", page_number);
+	status ret = alloc_e1table_entry(pid, page_number);
+	if(ret != OK)
+	{
+		kprintf("Page not allocated\n");
+		return SYSERR;
+	}
+
+	uint32 phys_address = proctab[pid].ptable[page_number].eentry->address;
+	uint32 pte = find_pte_addr(pid, virt_addr);
+
+
+
+	ret = clear_e1_page(phys_address);
+	if(ret != OK)
+	{
+		kprintf("Failed to clear E1 page\n");
+		return SYSERR;
+	}
+
+	kprintf("[0x%x, 0x%x]", pte, phys_address);
+	// *(uint32 *)pte = phys_address | 0x7;
+	
+	*(uint32 *)pte = phys_address + pd_lsb12;
+	
+	return OK;
 }
 
 
@@ -187,14 +211,31 @@ uint32 get_e1_size(){
 }
 
 
-uint32* find_pte_addr(pid32 pid, uint32 virt_addr){
-	
-	return (uint32*)(-1);
+uint32 find_pte_addr(pid32 pid, uint32 virt_addr){
+	uint32 page_number = (virt_addr >> 12) & 0x3FF;	// page number of the virtual address
+	uint32 pd_number = (virt_addr >> 22);	// page directory number of the virtual address
+	uint32 pd = proctab[pid].pd->address;
+	kprintf("[%d, (pd)0x%x]\n", pid, pd);
+
+	uint32 pd_addr = pd + (pd_number * 4);
+	uint32 pt = *(uint32 *)pd_addr & 0xFFFFF000;
+	kprintf("pd[%d] = 0x%x\n", pd_number, pd + (pd_number * 4));
+	kprintf("pt = 0x%x\n", pt);
+
+
+	uint32 pte = pt + (page_number * sizeof(uint32));
+
+	return pte;
+
+	// return (uint32*)(-1);
 }
 
-uint32 clear_e1_page(uint32 e1_addr){
-	
-	return -1;
+status clear_e1_page(uint32 e1_addr){
+	int i = 0;
+	for(i = 0; i < FRAME_SIZE; i++){
+		*(uint32 *)(e1_addr + i) = 0;
+	}
+	return OK;
 }
 
 /*
@@ -202,7 +243,9 @@ uint32 clear_e1_page(uint32 e1_addr){
 	returns 1 yes, 0 otherwise 
 */
 int pde_present(pid32 pid, uint32 virt_addr){
-	return 0;
+	
+	// TODO : returning 1 for testing
+	return 1;
 }
 
 
