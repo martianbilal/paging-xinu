@@ -10,6 +10,7 @@ status alloc_e1table_entry(pid32 pid, uint32 page_number){
 	return OK;
 }
 
+/* Deallocate all the e1table entries of the given process */
 void dealloc_e1table_entries(pid32 pid){
 
 	int i;
@@ -20,13 +21,14 @@ void dealloc_e1table_entries(pid32 pid){
 	}
 }
 
+/* Deallocates the given eentry */
 void dealloc_e1table_entry(eentry_t *eentry){
 
 	eentry->pid = -1;
 	eentry->page_number = -1;
 }
 
-/* Searches for an empty entry in the e1table, and if finds one, it allocates it */
+/* Searches for an empty entry in e1table, and if finds one, it sets it up */
 eentry_t *new_e1table_entry(pid32 pid, uint32 page_number){
 
 	eentry_t *e1entry = get_e1entry();
@@ -36,7 +38,7 @@ eentry_t *new_e1table_entry(pid32 pid, uint32 page_number){
 	return e1entry;
 }
 
-/* Returns a pointer to an empty entry in the e1table or NULL if all are occupied */
+/* Returns a pointer to an empty entry in e1table or NULL if all are occupied */
 eentry_t *get_e1entry(void){
 
 	int i;

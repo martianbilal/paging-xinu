@@ -1,12 +1,14 @@
 #include <xinu.h>
 
+/* Prints the contents of main memory from start_addr to end_addr */
 void print_mem(uint32 *start_addr, uint32 *end_addr){
 
 	uint32 *entry_addr;
 	for (entry_addr=start_addr; entry_addr<end_addr; entry_addr++)
-			kprintf("0x%x: 0x%x\n", entry_addr, *(entry_addr));
+			kprintf("[0x%x]: 0x%x\n", entry_addr, *(entry_addr));
 }
 
+/* Prints the size of the different memory regions */
 void print_mem_regions(void){
 
 	kprintf("Region A: [0x%x - 0x%x], #%d frames\n", a_addr, b_addr-FRAME_SIZE, a_frames);

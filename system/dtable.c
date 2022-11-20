@@ -1,6 +1,6 @@
 #include <xinu.h>
 
-
+/* Allocate a dtable entry for a page directory and update the pre-process relevant bookkeping side */
 status alloc_dtable_pd(pid32 pid){
 
 	dentry_t *dentry = new_dtable_entry(pid, pd, 5);
@@ -9,6 +9,7 @@ status alloc_dtable_pd(pid32 pid){
 	return OK;
 }
 
+/* Allocate the dtable entries for the shared page tables and update the pre-process relevant bookkeping side */
 void alloc_dtable_shared_pts(void){
 
 	int i;
@@ -17,6 +18,7 @@ void alloc_dtable_shared_pts(void){
 	}
 }
 
+/* Allocate a dtable entry for a page table and update the pre-process relevant bookkeping side */
 status alloc_dtable_pt(pid32 pid){
 
 	dentry_t *dentry = new_dtable_entry(pid, pt, 0);
@@ -26,6 +28,7 @@ status alloc_dtable_pt(pid32 pid){
 	return OK;
 }
 
+/* Deallocate all the dtable entries of the given process */
 void dealloc_dtable_entries(pid32 pid){
 
 	int i;
@@ -37,6 +40,7 @@ void dealloc_dtable_entries(pid32 pid){
 	}
 }
 
+/* Searches for an empty dentry in dtable, and if finds one, it sets it up */
 dentry_t *new_dtable_entry(pid32 pid, type_t type, uint32 used_entries){
 
 	dentry_t *dentry = get_dentry();
@@ -47,6 +51,7 @@ dentry_t *new_dtable_entry(pid32 pid, type_t type, uint32 used_entries){
 	return dentry;
 }
 
+/* Returns a pointer to an empty entry in dtable or NULL if all are occupied */
 dentry_t *get_dentry(void){
 
 	int i;
@@ -56,6 +61,7 @@ dentry_t *get_dentry(void){
 	return NULL;
 }
 
+/* Prints the dtable */
 void print_dtable(void){
 
 	int i;
@@ -67,6 +73,7 @@ void print_dtable(void){
 															dtable[i].address);
 }
 
+/* Prints the per-process D region information */
 void print_proc_dinfo(pid32 pid){
 
 	struct	procent	*prptr;
