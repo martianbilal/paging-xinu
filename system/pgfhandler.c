@@ -204,11 +204,12 @@ status assign_page(pid32 pid, uint32 virt_addr){
 		return SYSERR;
 	}
 
-	kprintf("[0x%x, 0x%x]", pte, phys_address);
+	kprintf("[0x%x, 0x%x]", pte, phys_address | 0x1);
 	// *(uint32 *)pte = phys_address | 0x7;
 	
-	// *(uint32 *)pte = phys_address + pd_lsb12;
-	set_p_pte(currpid, virt_addr, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	// *(uint32 *)pte = phys_address | 0x1;
+	uint32 pte_content = proctab[currpid].ptable[page_number].eentry->address & 0xFFFFF000;
+	set_p_pte(currpid, virt_addr, ( pte_content | 0x3));
 
 
 	// uint32 page_number = get_pte((uint32)virt_addr);
@@ -229,7 +230,8 @@ int access_violation(uint32 virt_addr){
 	int writable = is_page_writeable(currpid, virt_addr);
 	uint32 access = pferrorcode & 0x2;
 
-	if(writable == 0 && access == 1)
+	
+	if(writable == 0 && access == 2)
 		return 1;
 	else
 		return 0;
@@ -266,7 +268,6 @@ uint32 find_pte_addr(pid32 pid, uint32 virt_addr){
 
 	return pte;
 
-	// return (uint32*)(-1);
 }
 
 status clear_e1_page(uint32 e1_addr){

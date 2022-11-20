@@ -115,7 +115,7 @@ void enable_paging(void){
 	asm("movl pd_n_addr, %eax");
 	asm("movl %eax, %cr3");
 	asm("movl %cr0, %eax");
-	asm("orl $0x80000000, %eax");
+	asm("orl $0x80010000, %eax");
 	asm("movl %eax, %cr0");
 }
 int is_page_writeable(pid32 pid, uint32 p_addr){
