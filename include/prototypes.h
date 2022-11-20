@@ -200,7 +200,7 @@ extern	void	pgfdisp(void);
 
 /* in file pfhandler.c */
 
-extern	syscall	pgfhandler(void);
+extern	void	pgfhandler(void);
 
 /* in file clkhandler.c */
 

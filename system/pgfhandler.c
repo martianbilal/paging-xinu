@@ -15,6 +15,7 @@ status clear_e1_page(uint32 e1_addr);
 
 
 int access_violation(uint32 virt_addr);
+int not_allocated(uint32 virt_addr);
 int assigned_physical(uint32 virt_addr);
 int pde_present(pid32 pid, uint32 virt_addr);
 int assign_page(pid32 pid, uint32 virt_addr);
@@ -26,7 +27,7 @@ int getcr3(void);
  * pgfhandler - paging fault handler
  *-------------------------------------------------------------------------
  */
-syscall pgfhandler()
+void pgfhandler()
 {
 	struct procent *prptr;
     intmask mask = disable();
@@ -38,27 +39,35 @@ syscall pgfhandler()
 
 	prptr = &proctab[currpid];
 
-    kprintf("======= Paging fault handler called ==========\n");
-	kprintf("error code : 0x%x\n", pferrorcode);
-	// kprintf("EIP : 0x%x\n", pinstr);
-	// kprintf("eflags : 0x%x\n", peflags);
-	// kprintf("cs : 0x%x\n", pcs);
+    // kprintf("======= Paging fault handler called ==========\n");
+	// kprintf("error code : 0x%x\n", pferrorcode);
+	// // kprintf("EIP : 0x%x\n", pinstr);
+	// // kprintf("eflags : 0x%x\n", peflags);
+	// // kprintf("cs : 0x%x\n", pcs);
 
-	kprintf("Virtual address: 0x%x\n", virt_addr);
-	kprintf("Virtual directory number: 0x%x\n", virt_page_dir);
-	kprintf("Virtual page table number: 0x%x\n", virt_page_tab);
+	// kprintf("Virtual address: 0x%x\n", virt_addr);
+	// kprintf("Virtual directory number: 0x%x\n", virt_page_dir);
+	// kprintf("Virtual page table number: 0x%x\n", virt_page_tab);
 
-	kprintf("%s, ", __func__);
+	// kprintf("%s, ", __func__);
 
 	// TODO : check if the page is not assigned a physical page
 
-
-	if(!pde_present(currpid, virt_addr)){
-		kprintf("pid %d does not have address\n", currpid, virt_addr);
-		goto ret;
+	// check if the page was not allocated 
+	if(not_allocated(virt_addr)){
+		// kprintf("not allocated\n");
+		kill(currpid);
+		restore(mask);
+		return;
 	}
+
+
+	// if(!pde_present(currpid, virt_addr)){
+	// 	// kprintf("pid %d does not have address\n", currpid, virt_addr);
+	// 	goto ret;
+	// }
 	if(!assigned_physical(virt_addr)){
-		// kprintf("Page not assigned a physical page\n");
+		// // kprintf("Page not assigned a physical page\n");
 		// TODO : for part 2, check if E1 and E2 both are full and then queue the process
 		// if(e1_full()){
 		// 	// nothing to do right now
@@ -66,20 +75,20 @@ syscall pgfhandler()
 		// TODO : check if only E1 is full, call swap
 		// TODO : assign the physical page to the faulting address
 		if (assign_page(currpid, virt_addr)){
-			kprintf("Page assigned\n");
+			// kprintf("Page assigned\n");
 		}
 		else{
-			kprintf("Page not assigned\n");
+			// kprintf("Page not assigned\n");
 			goto ret;
 		}
 		// TODO : check if the page has moved to the backing store
 	} else {
-		kprintf("Page already assigned\n");
+		// kprintf("Page already assigned\n");
 		if(access_violation(virt_addr)){
-			kprintf("Access violation\n");
-			kill(currpid);
+			// kprintf("Access violation\n");
+			// kill(currpid);
 			restore(mask);
-			return SYSERR;
+			return;
 		}
 	}
 	/*
@@ -180,15 +189,15 @@ ret:
 status assign_page(pid32 pid, uint32 virt_addr){
 	uint32 page_number = (virt_addr >> 12) & 0x3FF;	// page number of the virtual address
 
-	kprintf("%s[0x%x, 0x%x], ", __func__, virt_addr, page_number);
+	// kprintf("%s[0x%x, 0x%x], ", __func__, virt_addr, page_number);
 	
 
 
-	kprintf("allocating the page with page number %d\n", page_number);
+	// kprintf("allocating the page with page number %d\n", page_number);
 	status ret = alloc_e1table_entry(pid, page_number);
 	if(ret != OK)
 	{
-		kprintf("Page not allocated\n");
+		// kprintf("Page not allocated\n");
 		return SYSERR;
 	}
 
@@ -200,11 +209,11 @@ status assign_page(pid32 pid, uint32 virt_addr){
 	ret = clear_e1_page(phys_address);
 	if(ret != OK)
 	{
-		kprintf("Failed to clear E1 page\n");
+		// kprintf("Failed to clear E1 page\n");
 		return SYSERR;
 	}
 
-	kprintf("[0x%x, 0x%x]", pte, phys_address | 0x1);
+	// kprintf("[0x%x, 0x%x]", pte, phys_address | 0x1);
 	// *(uint32 *)pte = phys_address | 0x7;
 	
 	// *(uint32 *)pte = phys_address | 0x1;
@@ -216,11 +225,19 @@ status assign_page(pid32 pid, uint32 virt_addr){
 	// alloc_e1table_entry(pid, page_number);
 	// set_p_pte(pid, (uint32)virt_addr, (proctab[pid].ptable[page_number].eentry->address + pt_lsb12));
 	// // *x = 'a';
-	// kprintf("%d\n", *x);
+	// // kprintf("%d\n", *x);
 
 
 
 	return OK;
+}
+
+
+int not_allocated(uint32 virt_addr){
+	uint32 page_number = (virt_addr >> 12) & 0x3FF;	// page number of the virtual address
+	if(proctab[currpid].ptable[page_number].loc != vmem)
+		return 1;
+	return 0;
 }
 
 /*
@@ -256,12 +273,12 @@ uint32 find_pte_addr(pid32 pid, uint32 virt_addr){
 	uint32 page_number = (virt_addr >> 12) & 0x3FF;	// page number of the virtual address
 	uint32 pd_number = (virt_addr >> 22);	// page directory number of the virtual address
 	uint32 pd = proctab[pid].pd->address;
-	kprintf("[%d, (pd)0x%x]\n", pid, pd);
+	// kprintf("[%d, (pd)0x%x]\n", pid, pd);
 
 	uint32 pd_addr = pd + (pd_number * 4);
 	uint32 pt = *(uint32 *)pd_addr & 0xFFFFF000;
-	kprintf("pd[%d] = 0x%x\n", pd_number, pd + (pd_number * 4));
-	kprintf("pt = 0x%x\n", pt);
+	// kprintf("pd[%d] = 0x%x\n", pd_number, pd + (pd_number * 4));
+	// kprintf("pt = 0x%x\n", pt);
 
 
 	uint32 pte = pt + (page_number * sizeof(uint32));

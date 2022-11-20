@@ -21,8 +21,19 @@ process	main(void)
 	// Insert test code below
 
 	kprintf("Hello World\n");
-	char *x = vmhgetmem(3);
-	char *y = x + 4097;
+
+
+	// TEST for accessing unallocated page
+	// char *gva = (char *)0x1000000;
+	// *gva = 'a';
+	
+	// SETUP For PF TEST
+
+	// char *x = vmhgetmem(3);
+	// char *y = x + 4097;
+	
+	// -------------------------
+	
 	// kprintf("Address for x : %x\n", x);
 	// // kprintf("Value of x : %d\n", *x);
 	// *x = 'a';
@@ -41,15 +52,15 @@ process	main(void)
 
 	// kprintf("Value of y : %d\n", *y);
 
-
-	for(i = 0; i < (4096 * 2); i++) {
-		*(x + i) = 'a';
-		if(*(x + i) != 'a') {
-			kprintf("Error at %d\n", i);
-			break;
-		}
-		kprintf("Value of x + %d : %d\n",i , *x);
-	}
+	// TEST PAGE FAULT - EXTENSIVE
+	// for(i = 0; i < (4096 * 2); i++) {
+	// 	*(x + i) = 'a';
+	// 	if(*(x + i) != 'a') {
+	// 		kprintf("Error at %d\n", i);
+	// 		break;
+	// 	}
+	// 	kprintf("Value of x + %d : %d\n",i , *x);
+	// }
 
 	// for(i = 0; i < (10 * 2); i++) {
 	// 	*(x + i) = 'a';
@@ -70,11 +81,11 @@ process	main(void)
 /* A.1. */
 /*
 	char *va = vmhgetmem(1);
-	// Simulate page handler part [begin]
-	uint32 page_number = get_pte((uint32)va);
-	alloc_e1table_entry(currpid, page_number);
-	set_p_pte(currpid, (uint32)va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
-	// Simulate page handler part [end]
+	// // Simulate page handler part [begin]
+	// uint32 page_number = get_pte((uint32)va);
+	// alloc_e1table_entry(currpid, page_number);
+	// set_p_pte(currpid, (uint32)va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	// // Simulate page handler part [end]
 	va[0] = 'a';
 	va[1] = 'p';
 	va[2] = 'p';
@@ -91,11 +102,11 @@ process	main(void)
 /* A.2. */
 /*
 	char *va = vmhgetmem(1);
-	// Simulate page handler part [begin]
-	uint32 page_number = get_pte((uint32)va);
-	alloc_e1table_entry(currpid, page_number);
-	set_p_pte(currpid, (uint32)va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
-	// Simulate page handler part [end]
+	//// Simulate page handler part [begin]
+	// uint32 page_number = get_pte((uint32)va);
+	// alloc_e1table_entry(currpid, page_number);
+	// set_p_pte(currpid, (uint32)va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	// // Simulate page handler part [end]
 	va[0] = 'a';
 	va[1] = 'p';
 	va[2] = 'p';
@@ -109,8 +120,8 @@ process	main(void)
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0x1400000, 1) == SYSERR) ? "SYSERR" : "OK"));
 	// Should return OK (1 byte before the upper bound)
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0x13FFFFF, 1) == SYSERR) ? "SYSERR" : "OK"));
-*/
 
+*/
 /* A.3. */
 /*
 
