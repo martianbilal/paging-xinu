@@ -12,6 +12,9 @@ uint32 get_e1_size();
 uint32 find_pte_addr(pid32 pid, uint32 virt_addr);
 status clear_e1_page(uint32 e1_addr);
 
+
+
+int access_violation(uint32 virt_addr);
 int assigned_physical(uint32 virt_addr);
 int pde_present(pid32 pid, uint32 virt_addr);
 int assign_page(pid32 pid, uint32 virt_addr);
@@ -49,6 +52,7 @@ syscall pgfhandler()
 
 	// TODO : check if the page is not assigned a physical page
 
+
 	if(!pde_present(currpid, virt_addr)){
 		kprintf("pid %d does not have address\n", currpid, virt_addr);
 		goto ret;
@@ -69,6 +73,14 @@ syscall pgfhandler()
 			goto ret;
 		}
 		// TODO : check if the page has moved to the backing store
+	} else {
+		kprintf("Page already assigned\n");
+		if(access_violation(virt_addr)){
+			kprintf("Access violation\n");
+			kill(currpid);
+			restore(mask);
+			return SYSERR;
+		}
 	}
 	/*
 		for(int i = 0; i < list.size; i++){
@@ -210,6 +222,19 @@ status assign_page(pid32 pid, uint32 virt_addr){
 	return OK;
 }
 
+/*
+	access_pf - returns 1 if the page fault was caused by access violation
+*/
+int access_violation(uint32 virt_addr){
+	int writable = is_page_writeable(currpid, virt_addr);
+	uint32 access = pferrorcode & 0x2;
+
+	if(writable == 0 && access == 1)
+		return 1;
+	else
+		return 0;
+
+}
 
 uint32 find_free_e1(){
 	int i = 0;
@@ -270,7 +295,7 @@ int pde_present(pid32 pid, uint32 virt_addr){
 	returns 0 if not assigned a physical page, 1 otherwise
 */
 int assigned_physical(uint32 virt_addr){
-	return 0;
+	return page_exists(currpid, virt_addr);	
 }
 
 

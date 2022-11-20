@@ -23,14 +23,14 @@ process	main(void)
 
 	kprintf("Hello World\n");
 	char *x = vmhgetmem(3);
-	// char *y = x + 4097;
-	// kprintf("Address for x : %x\n", x);
-	// *x = 'a';
-	// kprintf("Value of x : %d\n", *x);
-	// *x = 'a';
+	char *y = x + 4097;
+	kprintf("Address for x : %x\n", x);
+	*x = 'a';
+	kprintf("Value of x : %d\n", *x);
+	*x = 'b';
 	// // *(x + 1) = 'a';
 
-	// kprintf("Value of x : %d\n", *x);
+	kprintf("Value of x : %d\n", *x);
 	
 
 	// kprintf("2nd : Value of x : %d\n", *x);
@@ -42,14 +42,14 @@ process	main(void)
 	// kprintf("Value of y : %d\n", *y);
 
 
-	for(i = 0; i < (4096 * 2); i++) {
-		*(x + i) = 'a';
-		if(*(x + i) != 'a') {
-			kprintf("Error at %d\n", i);
-			break;
-		}
-		kprintf("Value of x + %d : %d\n",i , *x);
-	}
+	// for(i = 0; i < (4096 * 2); i++) {
+	// 	*(x + i) = 'a';
+	// 	if(*(x + i) != 'a') {
+	// 		kprintf("Error at %d\n", i);
+	// 		break;
+	// 	}
+	// 	kprintf("Value of x + %d : %d\n",i , *x);
+	// }
 
 	// for(i = 0; i < (10 * 2); i++) {
 	// 	*(x + i) = 'a';

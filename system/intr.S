@@ -265,8 +265,6 @@ _Xint14:
 pgfdisp: 
 	popl pferrorcode
     pushl %eax
-	popl pferrorcode
-	pushl pferrorcode
 
 	pushal
 	call pgfhandler		/* call Page Fault ISR */

@@ -118,6 +118,39 @@ void enable_paging(void){
 	asm("orl $0x80000000, %eax");
 	asm("movl %eax, %cr0");
 }
+int is_page_writeable(pid32 pid, uint32 p_addr){
+
+	/* Get the base address of page's page table */
+	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
+
+	/* Clean the 12 less significant bits used as control flag */
+	uint32 reset_lsb12_mask = 0xFFFFF000;
+	pt_base_addr = (pt_base_addr&reset_lsb12_mask);
+
+	/* Get the pte entry that corresponds to the given page */
+	uint32 pte = *((uint32 *)(pt_base_addr + get_pte(p_addr)*4));
+
+	/* Check if the page is writeable */
+	if (pte&0x2) return 1;
+	return 0;
+}
+
+int page_exists(pid32 pid, uint32 p_addr){
+
+	/* Get the base address of page's page table */
+	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
+
+	/* Clean the 12 less significant bits used as control flag */
+	uint32 reset_lsb12_mask = 0xFFFFF000;
+	pt_base_addr = (pt_base_addr&reset_lsb12_mask);
+
+	/* Get the pte entry that corresponds to the given page */
+	uint32 pte = *((uint32 *)(pt_base_addr + get_pte(p_addr)*4));
+
+	/* Check if the page exists */
+	if (pte&0x1) return 1;
+	return 0;
+}
 
 /* Check if there is already a pde for the page table corresponding to the given page */
 int pt_exists(pid32 pid, uint32 p_addr){

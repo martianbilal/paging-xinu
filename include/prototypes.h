@@ -107,6 +107,12 @@ extern void zero_pt_mem(uint32);
 extern void enable_paging(void);
 
 /* in file paging.c */
+int is_page_writeable(pid32 pid, uint32 p_addr);
+
+/* in file paging.c */
+int page_exists(pid32 pid, uint32 p_addr);
+
+/* in file paging.c */
 extern int pt_exists(pid32, uint32);
 
 /* in file paging.c */
