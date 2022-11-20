@@ -192,7 +192,7 @@ static	void	sysinit()
 
 
 	// Set the page fault handler
-	set_evec(14, (uint32)pgfdisp);
+	// set_evec(14, (uint32)pgfdisp);
 
 	for (i = 0; i < NDEVS; i++) {
 		init(i);

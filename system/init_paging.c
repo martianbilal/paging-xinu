@@ -19,19 +19,13 @@ void init_paging(void){
 	
 	init_paging_structs();
 	
-	alloc_dtable_pd(currpid);
+	alloc_dtable_pd(NULLPROC);
 	alloc_dtable_shared_pts();
 
 	alloc_shared_pts();
-	alloc_common_pd(currpid);
+	alloc_common_pd(NULLPROC);
 
 	enable_paging();
-
-	/* Inspect */
-	//print_mem((uint32 *)pd_n_addr, (uint32 *)pt_m_addr);
-	//print_mem_regions();
-	//print_dtable();
-	//print_proc_dinfo(currpid);
 }
 
 void init_globals(void){

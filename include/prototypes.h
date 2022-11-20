@@ -7,6 +7,9 @@ extern char *vmhgetmem(uint16);
 /* in file vmhfreemem.c */
 extern syscall vmhfreemem(char *, uint16);
 
+
+
+
 /* in file init_paging.c */
 extern void init_paging(void);
 
@@ -16,20 +19,20 @@ extern void init_globals(void);
 /* in file init_paging.c */
 extern void init_paging_structs(void);
 
-/* in file dtable.c */
-extern void alloc_dtable_pd(pid32);
+
+
 
 /* in file dtable.c */
-extern void alloc_dtable_pt(pid32);
-
-/* in file dtable.c */
-extern void dealloc_dtable_pts(pid32);
-
-/* in file dtable.c */
-extern void dealloc_dtable_pd(pid32);
+extern status alloc_dtable_pd(pid32);
 
 /* in file dtable.c */
 extern void alloc_dtable_shared_pts(void);
+
+/* in file dtable.c */
+extern status alloc_dtable_pt(pid32);
+
+/* in file dtable.c */
+extern void dealloc_dtable_entries(pid32);
 
 /* in file dtable.c */
 extern dentry_t *new_dtable_entry(pid32, type_t, uint32);
@@ -43,17 +46,17 @@ extern void print_dtable(void);
 /* in file dtable.c */
 extern void print_proc_dinfo(pid32);
 
-/* in file dtable.c */
-extern void dealloc_dtable(pid32);
 
-/* in file dtable.c */
-extern void dealloc_e1table(pid32);
 
-/* in file e1table.c */
-extern void dealloc_e1table_entry(eentry_t *);
 
 /* in file e1table.c */
 extern status alloc_e1table_entry(pid32, uint32);
+
+/* in file e1table.c */
+extern void dealloc_e1table_entries(pid32);
+
+/* in file e1table.c */
+extern void dealloc_e1table_entry(eentry_t *);
 
 /* in file e1table.c */
 extern eentry_t *new_e1table_entry(pid32, uint32);
@@ -67,26 +70,32 @@ extern void print_e1table(void);
 /* in file e1table.c */
 extern void print_proc_einfo(pid32);
 
+
+
+
 /* in file ptable.c */
 extern uint32 alloc_ptable_pages(pid32, uint16);
+
+
+
 
 /* in file paging.c */
 extern void alloc_shared_pts(void);
 
 /* in file paging.c */
-extern void test_add_pt(pid32, uint32);
+extern void alloc_common_pd(pid32);
+
+/* in file paging.c */
+extern status test_alloc_pt(pid32, uint32);
 
 /* in file paging.c */
 extern uint32 get_pt_pde(pid32, uint32);
 
 /* in file paging.c */
-extern void test_alloc_pt(pid32, uint32);
+extern void set_pt_pde(pid32, uint32, uint32);
 
 /* in file paging.c */
-extern int pt_exists(pid32, uint32);
-
-/* in file paging.c */
-extern void alloc_common_pd(pid32);
+extern void set_p_pte(pid32, uint32, uint32);
 
 /* in file paging.c */
 extern void zero_pd_mem(uint32);
@@ -95,24 +104,16 @@ extern void zero_pd_mem(uint32);
 extern void zero_pt_mem(uint32);
 
 /* in file paging.c */
-extern void dealloc_pts_and_pd(pid32);
-
-/* in file paging.c */
-extern uint32 *add_pd_entry(pid32, uint32);
-
-/* in file paging.c */
 extern void enable_paging(void);
 
 /* in file paging.c */
-extern void zero_pte(pid32, uint32);
+extern int pt_exists(pid32, uint32);
 
 /* in file paging.c */
-extern int is_valid_va(char *);
+extern int is_valid_va(uint32);
 
 /* in file paging.c */
-extern int is_valid_pt(char *);
-
-//extern int is_valid_pte(char *blockaddr)
+extern int is_valid_pt(uint32);
 
 /* in file paging.c */
 extern uint32 get_pde(uint32);
@@ -123,11 +124,17 @@ extern uint32 get_pte(uint32);
 /* in file paging.c */
 extern uint32 get_va(uint32);
 
+
+
+
 /* in file mem_inspect.c */
 extern void print_mem(uint32 *, uint32 *);
 
 /* in file mem_inspect.c */
 extern void print_mem_regions(void);
+
+
+
 
 /* in file pt_list.c */
 extern void	print_pts(pid32);
@@ -146,6 +153,9 @@ extern void delete_pt(dentry_t *, pid32);
 
 /* in file pt_list.c */
 extern void delete_pts(pid32);
+
+
+
 
 /* in file addargs.c */
 extern	status	addargs(pid32, int32, int32[], int32,char *, void *);
@@ -829,7 +839,10 @@ extern	void	xdone(void);
 /* in file yield.c */
 extern	syscall	yield(void);
 
-extern uint32 instr;
+extern uint32 pinstr;
+extern uint32 pferrorcode;
+extern uint32 pcs;
+extern uint32 peflags;
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)   ( ( 0xff & ((x)>>8) ) | ( (0xff & (x)) << 8 ) )

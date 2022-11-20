@@ -60,5 +60,5 @@ void print_pts(pid32 pid) {
 
 	pt_info_t *ptptr;
 	for (ptptr = proctab[pid].pts; ptptr != NULL; ptptr = ptptr->next)
-		kprintf("(address=0x%x) (used_entries=%d)\n", ptptr->dentry->address, ptptr->dentry->used_entries);
+		kprintf("pt: (address=0x%x) (used_entries=%d)\n", ptptr->dentry->address, ptptr->dentry->used_entries);
 }

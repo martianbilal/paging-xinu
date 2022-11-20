@@ -29,9 +29,18 @@ syscall	kill(
 	for (i=0; i<3; i++) {
 		close(prptr->prdesc[i]);
 	}
+	
 	freestk(prptr->prstkbase, prptr->prstklen);
-	dealloc_dtable(pid);
-	dealloc_e1table(pid);
+
+	/* Deallocating paging bookkeping structs */
+//	if (proctab[pid].pts != NULL){
+//		uint32 pt_addr = proctab[pid].pts->dentry->address;
+//		zero_pt_mem(pt_addr); // Zero the ptes of the new pt
+//	}
+	
+	dealloc_dtable_entries(pid);
+	dealloc_e1table_entries(pid);
+	delete_pts(pid);
 
 	switch (prptr->prstate) {
 	case PR_CURR:

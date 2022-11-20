@@ -1,15 +1,12 @@
 #include <xinu.h>
 
 
-void alloc_dtable_pd(pid32 pid){
+status alloc_dtable_pd(pid32 pid){
 
-	proctab[pid].pd = new_dtable_entry(pid, pd, 5);
-}
-
-void alloc_dtable_pt(pid32 pid){
-
-	insert_pt(new_dtable_entry(pid, pt, 0), pid);
-	proctab[pid].pd->used_entries++;
+	dentry_t *dentry = new_dtable_entry(pid, pd, 5);
+	if (dentry == NULL) return SYSERR;
+	proctab[pid].pd = dentry;
+	return OK;
 }
 
 void alloc_dtable_shared_pts(void){
@@ -20,19 +17,16 @@ void alloc_dtable_shared_pts(void){
 	}
 }
 
-void dealloc_dtable_pts(pid32 pid){
+status alloc_dtable_pt(pid32 pid){
 
-	pt_info_t* cur_pt = proctab[pid].pts;
-	for (; cur_pt != NULL; cur_pt = cur_pt->next)
-		cur_pt->dentry->pid = -1;
+	dentry_t *dentry = new_dtable_entry(pid, pt, 0);
+	if (dentry == NULL) return SYSERR;
+	insert_pt(dentry, pid);
+	proctab[pid].pd->used_entries++;
+	return OK;
 }
 
-void dealloc_dtable_pd(pid32 pid){
-
-	proctab[pid].pd->pid = -1;
-}
-
-void dealloc_dtable(pid32 pid){
+void dealloc_dtable_entries(pid32 pid){
 
 	int i;
 	for (i = 0; i < NDFRAME; i++){
@@ -46,6 +40,7 @@ void dealloc_dtable(pid32 pid){
 dentry_t *new_dtable_entry(pid32 pid, type_t type, uint32 used_entries){
 
 	dentry_t *dentry = get_dentry();
+	if (dentry == NULL) return NULL;
 	dentry->pid = pid;
 	dentry->type = type;
 	dentry->used_entries = used_entries;
@@ -56,9 +51,7 @@ dentry_t *get_dentry(void){
 
 	int i;
 	for (i=0; i<NDFRAME; ++i){
-		if (dtable[i].pid == -1){
-			return &dtable[i];
-		}
+		if (dtable[i].pid == -1) return &dtable[i];
 	}
 	return NULL;
 }
@@ -67,8 +60,9 @@ void print_dtable(void){
 
 	int i;
 	for (i=0; i<NDFRAME; i++)
-			kprintf("dtable[%d]: (pid=%d) (type=%d) (used_entries=%d) (address=0x%x)\n", i, 
-															dtable[i].pid, dtable[i].type, 
+			kprintf("dtable[%d]: (pid=%d) (type=%s) (used_entries=%d) (address=0x%x)\n", i, 
+															dtable[i].pid,
+															(dtable[i].type == pd)? "pd" : "pt", 
 															dtable[i].used_entries, 
 															dtable[i].address);
 }
@@ -78,6 +72,6 @@ void print_proc_dinfo(pid32 pid){
 	struct	procent	*prptr;
 	prptr = &proctab[pid];
 
-	kprintf("Page Directory: (address=0x%x) (used_entries=%d)\n", prptr->pd->address, prptr->pd->used_entries);
+	kprintf("pd: (address=0x%x) (used_entries=%d)\n", prptr->pd->address, prptr->pd->used_entries);
 	print_pts(pid);
 }

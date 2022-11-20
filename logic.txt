@@ -1,0 +1,93 @@
+init():
+	
+	1. Initialize null's per-process bookkeeping structs (pd, pts, ptable).
+		--- sysinit()
+	2. Initialize globals.
+		--- init_globals()
+	3. Declare and initialize dtable, e1table, e2table.
+		--- init_paging_structs()
+	4. Allocate dtable entry for null's pd and update null's pd.
+		--- alloc_dtable_pd()
+	5. Allocate dtable entries for null's pts (shared pts) and update null's pts.
+		--- alloc_dtable_shared_pts()
+	6. Allocate shared pts in memory in region D.
+		--- alloc_shared_pts()
+			-> writing ptes
+	7. Allocate null's pd in memory in region D, so to point to the shared tables.
+		--- alloc_common_pd()
+			-> zeroing pdes
+			-> writing the selected pdes
+	8. Enable pagging.
+		--- enable_paging()
+			-> updating cr3 and cr0
+
+create():
+	
+	1. Initialize process' per-process bookkeeping structs (pd, pts, ptable).
+	2. Allocate dtable entry for process' pd and update process' pd.
+		--- alloc_dtable_pd()
+	3. Allocate process' pd in memory in region D, so to point to the shared tables.
+		--- alloc_common_pd()
+			-> zeroing pdes
+			-> writing the selected pdes
+
+userret():
+	kill():
+
+		1. Deallocate process' dtable entries 
+			--- dealloc_dtable()
+		2. Deallocate process' e1table entries
+			--- dealloc_e1table()
+		3. Deallocate process' pt_list (pts)
+
+ctxsw():
+	
+	1. Update the cr3 register to point to the contexted-in process pd address.
+		--- ctxsw(&old_sp, &new_sp, new_pd)
+		--- resched() 
+
+vmhgetmem():
+	
+	1. Search for contiguous virtual memory and return the starting page.
+		--- alloc_ptable_pages()
+	2. Get the page's virtual address.
+		--- get_va()
+	3. Test whether the allocation of a new page is needed.
+		--- test_alloc_pt()
+		i. New page table need to be allocated.
+			a. Allocate dtable entry for the new page table and update process' pts and process' pd.used_entries.
+				--- alloc_dtable_pt()
+			b. Zeroing the memory that will hold the new page table.
+				--- zero_pt_mem()
+				-> This will cause the page faults.
+			c. Set the appropriate pde entry of process' pd to point to the address of new page table.
+				--- set_pt_pde()
+		ii. There is already a page table for the given process.
+			--- return
+	4. Return the virtual address of the starting page.
+
+vmhfreemem():
+
+	1. Check if whether the inputs are valid.
+	2. Determine the page in with the given address belongs.
+	3. For each page in the given range.
+		i. If was allocated in e1.
+			a. Deallocate the e1table entry for this page.
+				--- dealloc_e1table_entry()
+			b. Reset the appropriate pte entry of page's pt.
+				--- set_p_pte()
+			c. Reset process' ptable eentry field ( to NULL).
+	4. Reset process' ptable loc field ( to empty).
+
+Page Fault:
+	
+	1. Get the virtual address that page faulted.
+		--- uint32 va = get_va_from_reg(); //not implemented
+	2. Get the number of the page that the va belongs.
+		--- uint32 page_number = get_pte(va);
+	3. Allocate a new entry in e1table for the page faulted page.
+		--- alloc_e1table_entry(currpid, page_number);
+	4. Update the corresponding pte
+		--- set_p_pte(currpid, va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+
+TLB:

@@ -38,9 +38,26 @@ pid32	create(
 		return SYSERR;
 	}
 
-	prcount++;
 	prptr = &proctab[pid];
 
+	// Initialize the per-process pd, pts
+	prptr->pd = NULL;
+	prptr->pts = NULL;
+
+	// Initialize the per-process virtual address space
+	for (i = 0; i < NPROCPAGE; i++){
+		prptr->ptable[i].loc = empty;
+		prptr->ptable[i].eentry = NULL;
+	}
+
+	/* Set up the pagging per-process bookkeeping information */
+	if (alloc_dtable_pd(pid) == SYSERR){
+		return SYSERR;
+	}
+	alloc_common_pd(pid);
+
+	prcount++;
+	
 	/* Initialize process table entry for new process */
 	prptr->prstate = PR_SUSP;	/* Initial state is suspended	*/
 	prptr->prprio = priority;
@@ -57,20 +74,6 @@ pid32	create(
 	prptr->prdesc[0] = CONSOLE;
 	prptr->prdesc[1] = CONSOLE;
 	prptr->prdesc[2] = CONSOLE;
-
-	// Initialize the per-process pd, pts
-	prptr->pd = NULL;
-	prptr->pts = NULL;
-
-	// Initialize the per-process virtual address space
-	for (i = 0; i < NPROCPAGE; i++){
-		prptr->ptable[i].loc = empty;
-		prptr->ptable[i].eentry = NULL;
-	}
-
-	/* Set up the pagging per-process bookkeeping information */
-	alloc_dtable_pd(pid);
-	alloc_common_pd(pid);
 
 	/* Initialize stack as if the process was called		*/
 

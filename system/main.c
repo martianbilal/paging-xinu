@@ -5,6 +5,7 @@
 
 static uint32 cr3;
 extern uint32 pd_n_addr;
+char *gva;
 
 process	main(void)
 {
@@ -22,11 +23,14 @@ process	main(void)
 
 	kprintf("Hello World\n");
 	char *x = vmhgetmem(3);
-	char *y = x + 4097;
+	// char *y = x + 4097;
 	// kprintf("Address for x : %x\n", x);
 	// *x = 'a';
 	// kprintf("Value of x : %d\n", *x);
 	// *x = 'a';
+	// // *(x + 1) = 'a';
+
+	// kprintf("Value of x : %d\n", *x);
 	
 
 	// kprintf("2nd : Value of x : %d\n", *x);
@@ -91,19 +95,31 @@ process	main(void)
 	alloc_e1table_entry(currpid, 2);
 	alloc_e1table_entry(currpid, 3);
 	print_proc_einfo(currpid);
-	vmhfreemem(x, 4);
-	kprintf("%d\n",vmhfreemem(y, 2));
+	vmhfreemem(x, 3);
+	//kprintf("%d\n",vmhfreemem(y, 2));
 	print_proc_einfo(currpid);
 */
 /*	
 	kprintf("Before\n");
-	print_dtable();
 	print_e1table();
 	resume(create(sndA, 1024, 20, "sndA", 0, NULL));
-	sleep(2);
+	sleep(10);
 	kprintf("After\n");
-	print_dtable();
 	print_e1table();
+*/
+/*
+	gva = vmhgetmem(1);
+	uint32 page_number = get_pte((uint32)gva);
+	alloc_e1table_entry(currpid, page_number);
+	set_p_pte(currpid, (uint32)gva, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	gva[0] = 'a';
+    gva[1] = 'p';
+    gva[2] = 'p';
+    gva[3] = 'l';
+    gva[4] = 'e';
+    gva[5] = '\0';
+	resume(create(sndA, 1024, 20, "sndA", 0, NULL));
+	kprintf("%s\n", gva);
 */
 	return OK;
 }
@@ -112,13 +128,37 @@ process	main(void)
 void sndA(void){
 
 	kprintf("SndA\n");
+
+// Pseudo-page handler
+/*
+	char *va = vmhgetmem(1); //uint32 va = get_va_from_reg(); //not implemented
+	uint32 page_number = get_pte((uint32)va);
+	alloc_e1table_entry(currpid, page_number);
+	set_p_pte(currpid, (uint32)va, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	va[0]='a';
+*/
+
 /*	
 	asm("movl %cr3, %eax");
 	asm("movl %eax, cr3");
 	kprintf("0x%x\n",cr3);
 */
 /*	
-	print_dtable();
+	//print_dtable();
 	print_e1table();
+*/
+/*
+	gva = vmhgetmem(1);
+	uint32 page_number = get_pte((uint32)gva);
+	alloc_e1table_entry(currpid, page_number);
+	set_p_pte(currpid, (uint32)gva, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+	gva[0] = 'o';
+    gva[1] = 'r';
+    gva[2] = 'a';
+    gva[3] = 'n';
+    gva[4] = 'g';
+    gva[5] = 'e';
+    gva[6] = '\0';
+    kprintf("%s\n", gva);
 */
 }

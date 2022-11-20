@@ -36,7 +36,11 @@ syscall pgfhandler()
 	prptr = &proctab[currpid];
 
     kprintf("======= Paging fault handler called ==========\n");
-	kprintf("EIP : 0x%x\n", instr);
+	kprintf("error code : 0x%x\n", pferrorcode);
+	// kprintf("EIP : 0x%x\n", pinstr);
+	// kprintf("eflags : 0x%x\n", peflags);
+	// kprintf("cs : 0x%x\n", pcs);
+
 	kprintf("Virtual address: 0x%x\n", virt_addr);
 	kprintf("Virtual directory number: 0x%x\n", virt_page_dir);
 	kprintf("Virtual page table number: 0x%x\n", virt_page_tab);
@@ -191,8 +195,18 @@ status assign_page(pid32 pid, uint32 virt_addr){
 	kprintf("[0x%x, 0x%x]", pte, phys_address);
 	// *(uint32 *)pte = phys_address | 0x7;
 	
-	*(uint32 *)pte = phys_address + pd_lsb12;
-	
+	// *(uint32 *)pte = phys_address + pd_lsb12;
+	set_p_pte(currpid, virt_addr, (proctab[currpid].ptable[page_number].eentry->address + pt_lsb12));
+
+
+	// uint32 page_number = get_pte((uint32)virt_addr);
+	// alloc_e1table_entry(pid, page_number);
+	// set_p_pte(pid, (uint32)virt_addr, (proctab[pid].ptable[page_number].eentry->address + pt_lsb12));
+	// // *x = 'a';
+	// kprintf("%d\n", *x);
+
+
+
 	return OK;
 }
 

@@ -3,7 +3,21 @@
 
 #include <icu.s>
 
+
+
+
 	.text
+pferrorcode: .long 0
+pinstr: .long 0
+pcs: .long 0
+peflags: .long 0
+
+	.globl 	pferrorcode
+	.globl 	pinstr
+	.globl	pcs
+	.globl	peflags
+
+	.globl 	pgfdisp
 	.globl	disable
 	.globl	restore
 	.globl	enable
@@ -237,15 +251,30 @@ _Xint13:
 	pushl	$13
 	jmp	Xtrap
 
+
+	/*popl pferrorcode		/* pop error code */
+	/*popl pinstr
+	/*popl pcs
+	/*popl peflags
+	/*pushl peflags
+	/*pushl pcs
+	/*pushl pinstr
+
 	.globl  _Xint14			/* Page fault			*/
 _Xint14:
-	pushl	%ebp
-	movl	%esp,%ebp
+pgfdisp: 
+	popl pferrorcode
+    pushl %eax
+	popl pferrorcode
+	pushl pferrorcode
+
 	pushal
-	movl	%esp, %eax
-	pushl	%eax
-	pushl	$14
-	jmp	Xtrap
+	call pgfhandler		/* call Page Fault ISR */
+	popal
+
+	popl %eax
+	iret			/* return from interrupt-handler procedure */
+
 
 	.globl  _Xint15			/* (reserved)			*/
 _Xint15:
