@@ -313,6 +313,8 @@ int pde_present(pid32 pid, uint32 virt_addr){
 	returns 0 if not assigned a physical page, 1 otherwise
 */
 int assigned_physical(uint32 virt_addr){
+
+	// TODO : need updates for handling E2 swaps
 	return page_exists(currpid, virt_addr);	
 }
 
