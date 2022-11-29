@@ -89,10 +89,13 @@ extern void alloc_common_pd(pid32);
 extern status test_alloc_pt(pid32, uint32);
 
 /* in file paging.c */
-extern uint32 get_pt_pde(pid32, uint32);
+extern uint32 get_pt_pde_addr(pid32, uint32);
 
 /* in file paging.c */
 extern void set_pt_pde(pid32, uint32, uint32);
+
+/* in file paging.c */
+extern uint32 get_p_pte_addr(pid32, uint32);
 
 /* in file paging.c */
 extern void set_p_pte(pid32, uint32, uint32);
@@ -104,13 +107,16 @@ extern void zero_pd_mem(uint32);
 extern void zero_pt_mem(uint32);
 
 /* in file paging.c */
+extern void zero_p_mem(uint32);
+
+/* in file paging.c */
 extern void enable_paging(void);
 
 /* in file paging.c */
-int is_page_writeable(pid32 pid, uint32 p_addr);
+extern int is_page_writeable(pid32, uint32);
 
 /* in file paging.c */
-int page_exists(pid32 pid, uint32 p_addr);
+extern int page_exists(pid32, uint32);
 
 /* in file paging.c */
 extern int pt_exists(pid32, uint32);
@@ -122,13 +128,40 @@ extern int is_valid_va(uint32);
 extern int is_valid_pt(uint32);
 
 /* in file paging.c */
-extern uint32 get_pde(uint32);
+extern uint32 get_pde_num(uint32);
 
 /* in file paging.c */
-extern uint32 get_pte(uint32);
+extern uint32 get_pte_num(uint32);
 
 /* in file paging.c */
 extern uint32 get_va(uint32);
+
+
+
+
+/* in file pgfhandler.c */
+extern void pgfhandler(void);
+
+/* in file pgfhandler.c */
+extern int page_not_assigned(pid32, uint32);
+
+/* in file pgfhandler.c */
+extern int access_violation(uint32);
+
+/* in file pgfhandler.c */
+extern int page_swapped(pid32, uint32);
+
+/* in file pgfhandler.c */
+extern int assign_page(pid32, uint32);
+
+/* in file pgfhandler.c */
+extern uint32 getcr2(void);
+
+/* in file pgfhandler.c */
+extern uint32 getcr3(void);
+
+/* in file pgfhandler.c */
+extern int pde_present(pid32, uint32);
 
 
 
@@ -193,14 +226,6 @@ extern	pri16	chprio(pid32, pri16);
 /* in file clkupdate.S */
 
 extern	uint32	clkcount(void);
-
-/* in file pfdisp.S */
-
-extern	void	pgfdisp(void);
-
-/* in file pfhandler.c */
-
-extern	void	pgfhandler(void);
 
 /* in file clkhandler.c */
 

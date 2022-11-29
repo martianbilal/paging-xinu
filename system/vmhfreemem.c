@@ -6,7 +6,7 @@ syscall vmhfreemem(char *blockaddr, uint16 msize){
 	if (!is_valid_va((uint32)blockaddr)) return SYSERR;
 	if (!pt_exists(currpid, (uint32)blockaddr)) return SYSERR;
 
-	uint32 start_page = get_pte((uint32)blockaddr);
+	uint32 start_page = get_pte_num((uint32)blockaddr);
 	uint32 end_page = start_page + msize;
 	if (end_page > 1024) return SYSERR;
 

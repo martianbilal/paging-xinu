@@ -53,16 +53,16 @@ status test_alloc_pt(pid32 pid, uint32 p_addr){
 }
 
 /* Takes a page and returns the address of the pde that corresponds to that page's page table */
-uint32 get_pt_pde(pid32 pid, uint32 p_addr){
+uint32 get_pt_pde_addr(pid32 pid, uint32 p_addr){
 
 	uint32 pd_addr = proctab[pid].pd->address;
-	return	(pd_addr + (get_pde(p_addr)*4));
+	return	(pd_addr + (get_pde_num(p_addr)*4));
 }
 
 /* Sets the pde entry that corresponds to the given page table */
 void set_pt_pde(pid32 pid, uint32 p_addr, uint32 pt_addr){
 
-	*((uint32 *)get_pt_pde(pid, p_addr)) = (pt_addr + pd_lsb12);
+	*((uint32 *)get_pt_pde_addr(pid, p_addr)) = (pt_addr + pd_lsb12);
 }
 
 /*
@@ -78,18 +78,25 @@ void set_pt_pde(pid32 pid, uint32 p_addr, uint32 pt_addr){
 	pt_main = *(pde_main)&reset_lsb12_mask
 	*(pt_main+4*pte) = content
 */
-/* Set to content the pte that corresponds to the given page */
-void set_p_pte(pid32 pid, uint32 p_addr, uint32 content){
+
+/* Takes a page and returns the address of the pte that corresponds to that page */
+uint32 get_p_pte_addr(pid32 pid, uint32 p_addr){
 
 	/* Get the base address of page's page table */
-	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
+	uint32 pt_base_addr = *((uint32 *)get_pt_pde_addr(pid, p_addr));
 
 	/* Clean the 12 less significant bits used as control flag */
 	uint32 reset_lsb12_mask = 0xFFFFF000;
 	pt_base_addr = (pt_base_addr&reset_lsb12_mask);
 
-	/* Set the pte entry that corresponds to the given page */
-	*((uint32 *)(pt_base_addr + get_pte(p_addr)*4)) = content;
+	/* Return the pte entry that corresponds to the given page */
+	return (pt_base_addr + get_pte_num(p_addr)*4);
+}
+
+/* Set to content the pte that corresponds to the given page */
+void set_p_pte(pid32 pid, uint32 p_addr, uint32 f_addr){
+
+	*((uint32 *) get_p_pte_addr(pid, p_addr)) = (f_addr + pt_lsb12);
 }
 
 /* Set to zero all the memory allocated for the given pd */
@@ -108,6 +115,14 @@ void zero_pt_mem(uint32 pt_addr){
 		*((uint32 *)pt_addr) = 0x0;
 }
 
+/* Set to zero all the memory allocated for the given pt */
+void zero_p_mem(uint32 p_addr){
+
+	uint32 p_max_addr = p_addr + FRAME_SIZE;
+	for (; p_addr < p_max_addr; p_addr += 4)
+		*((uint32 *)p_addr) = 0x0;
+}
+
 /* Enable paging */
 void enable_paging(void){
 
@@ -118,44 +133,29 @@ void enable_paging(void){
 	asm("orl $0x80010000, %eax");
 	asm("movl %eax, %cr0");
 }
-int is_page_writeable(pid32 pid, uint32 p_addr){
 
-	/* Get the base address of page's page table */
-	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
-
-	/* Clean the 12 less significant bits used as control flag */
-	uint32 reset_lsb12_mask = 0xFFFFF000;
-	pt_base_addr = (pt_base_addr&reset_lsb12_mask);
-
-	/* Get the pte entry that corresponds to the given page */
-	uint32 pte = *((uint32 *)(pt_base_addr + get_pte(p_addr)*4));
-
-	/* Check if the page is writeable */
-	if (pte&0x2) return 1;
-	return 0;
-}
-
+//changed, or using bookkeeping structs?
 int page_exists(pid32 pid, uint32 p_addr){
 
-	/* Get the base address of page's page table */
-	uint32 pt_base_addr = *((uint32 *)get_pt_pde(pid, p_addr));
-
-	/* Clean the 12 less significant bits used as control flag */
-	uint32 reset_lsb12_mask = 0xFFFFF000;
-	pt_base_addr = (pt_base_addr&reset_lsb12_mask);
-
-	/* Get the pte entry that corresponds to the given page */
-	uint32 pte = *((uint32 *)(pt_base_addr + get_pte(p_addr)*4));
-
+	uint32 pte = *((uint32 *) get_p_pte_addr(pid, p_addr));
+	
 	/* Check if the page exists */
-	if (pte&0x1) return 1;
-	return 0;
+	return (pte&0x1);
+}
+
+//changed
+int is_page_writeable(pid32 pid, uint32 p_addr){
+
+	uint32 pte = *((uint32 *) get_p_pte_addr(pid, p_addr));
+	
+	/* Check if the page is writeable */
+	return (pte&0x2);
 }
 
 /* Check if there is already a pde for the page table corresponding to the given page */
 int pt_exists(pid32 pid, uint32 p_addr){
 			
-	return (*((uint32 *)get_pt_pde(pid, p_addr))&0x1);
+	return (*((uint32 *)get_pt_pde_addr(pid, p_addr))&0x1);
 }
 
 /* Check whether the given virtual address is valid based on the given details */
@@ -167,18 +167,18 @@ int is_valid_va(uint32 p_addr){
 /* A valid virtual addresses must belong in 4th pde's page table */
 int is_valid_pt(uint32 p_addr){
 
-	uint32 pde = get_pde(p_addr);
+	uint32 pde = get_pde_num(p_addr);
 	return (pde == 4);
 }
 
 /* Returns the page directory entry number that points to the page table of the given page address */
-uint32 get_pde(uint32 p_addr){
+uint32 get_pde_num(uint32 p_addr){
 
 	return (p_addr>>0x16);
 }
 
 /* Returns the page table entry number that points to the given page address */
-uint32 get_pte(uint32 p_addr){
+uint32 get_pte_num(uint32 p_addr){
 
 	return ((p_addr>>0xC)&0x3FF);
 }

@@ -263,15 +263,15 @@ _Xint13:
 	.globl  _Xint14			/* Page fault			*/
 _Xint14:
 pgfdisp: 
-	popl pferrorcode
-    pushl %eax
+	popl	pferrorcode
+    	pushl	%eax
 
 	pushal
-	call pgfhandler		/* call Page Fault ISR */
+	call	pgfhandler		/* call Page Fault ISR */
 	popal
 
-	popl %eax
-	iret			/* return from interrupt-handler procedure */
+	popl	%eax
+	iret				/* return from interrupt-handler procedure */
 
 
 	.globl  _Xint15			/* (reserved)			*/

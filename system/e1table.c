@@ -1,29 +1,5 @@
 #include <xinu.h>
 
-
-// // modified alloc_e1table_entry for page fault handler
-// status pf_alloc_e1_table_entry(pid32 pid, uint32 page_number){
-// 	eentry_t *e1entry = new_e1table_entry(pid, page_number);
-// 	if (e1entry == NULL) return SYSERR;
-	
-// 	// TODO : change the pte
-
-
-// 	proctab[pid].pages[page_number].loc = e1;
-// 	proctab[pid].pages[page_number].eentry = e1entry;
-// 	return OK;	
-// }
-// void dealloc_e1table(pid32 pid){
-/* Searches for an empty entry in e1table, and finds one, it allocates it and updates the per-process ptable */
-// status alloc_e1table_entry(pid32 pid, uint32 page_number){
-
-// 	eentry_t *e1entry = new_e1table_entry(pid, page_number);
-// 	if (e1entry == NULL) return SYSERR;
-// 	proctab[pid].ptable[page_number].loc = e1;
-// 	proctab[pid].ptable[page_number].eentry = e1entry;
-// 	return OK;
-// }
-
 /* Deallocate all the e1table entries of the given process */
 void dealloc_e1table_entries(pid32 pid){
 
