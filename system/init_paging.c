@@ -12,6 +12,8 @@ dentry_t dtable[NDFRAME];
 eentry_t e1table[NE1FRAME];
 eentry_t e2table[NE2FRAME];
 
+qid16 framewait;
+
 /* Initilizes the paging mechanism in Xinu */
 void init_paging(void){
 
@@ -79,4 +81,6 @@ void init_paging_structs(void){
 		e2table[i].page_number = -1;
 		e2table[i].address = (e2_addr + (i*FRAME_SIZE));
 	}
+
+	framewait = newqueue();
 }

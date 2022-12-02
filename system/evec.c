@@ -210,7 +210,37 @@ void	trap (
 	sp--;
 	kprintf("edi %08X (%u)\n", *sp, *sp);
 	sp--;
-
-	panic("Trap processing complete...\n");
+	uint32 ds = 0;
+	asm("movl %%ds, %0" : "=r"(ds));
+	kprintf("0x%x\n", ds);
+	//print_e1table();
+	//kprintf("[va]: 0x%x -> %s\n", va, va);
+    //print_e2table();
+    //print_proc_einfo(5);
+    //print_mem_regions();
+    //kprintf("%d\n", *((uint32*) 0x7e8000));
+	//kprintf("cr3: %x\n", getcr3());
+	//kprintf("pd: %x\n", proctab[currpid].pd->address);
+	//kprintf("a: %x b: %x\n", proctab[currpid].prstkptr, *(proctab[currpid].prstkptr));
+	//print_mem((uint32 *)0x3E0000, (uint32 *)0x3E9B28);
+	//panic("Trap processing complete...\n");
 	restore(mask);
 }
+
+/*
+error code 00110000 (1114112)
+CS 40008 eip 117CFB
+eflags 51606
+register dump:
+eax 001F16C4 (2037444)
+ecx 001F16B8 (2037432)
+edx 001F16AC (2037420)
+ebx 001F16A0 (2037408)
+esp 003E9B28 (4102952)
+ebp 003E9B28 (4102952)
+esi 001F167C (2037372)
+edi 001F1670 (2037360)
+a: 3e9b14 b: 28
+
+
+*/

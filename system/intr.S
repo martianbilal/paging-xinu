@@ -264,13 +264,9 @@ _Xint13:
 _Xint14:
 pgfdisp: 
 	popl	pferrorcode
-    	pushl	%eax
-
 	pushal
 	call	pgfhandler		/* call Page Fault ISR */
 	popal
-
-	popl	%eax
 	iret				/* return from interrupt-handler procedure */
 
 

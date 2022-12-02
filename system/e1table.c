@@ -22,6 +22,7 @@ void dealloc_e1table_entry(eentry_t *eentry){
 status alloc_e1table_entry(pid32 pid, uint32 page_number){
 	eentry_t *e1entry = new_e1table_entry(pid, page_number);
 	if (e1entry == NULL) return SYSERR;
+	if (evict_buf_put(e1entry) == SYSERR) return SYSERR; //added, check is superfluous
 	proctab[pid].ptable[page_number].loc = e1;
 	proctab[pid].ptable[page_number].eentry = e1entry;
 	return OK;

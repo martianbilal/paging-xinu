@@ -27,7 +27,6 @@ ctxsw:
 		/*   stack to the new process's stack.			*/
 
 		movl	(%eax),%esp			/* Pop up new process's SP	*/
-
 		/* Change the page directory address */
 		movl	%ebx, %cr3
 

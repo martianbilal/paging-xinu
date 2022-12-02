@@ -3,6 +3,7 @@
 #include "dtable.h"
 #include "etable.h"
 #include "ptable.h"
+#include "evict_buffer.h"
 #include "pt_list.h"
 #include "paging_limits.h"
 
@@ -22,6 +23,7 @@
 #define	PR_SUSP		5	/* Process is suspended			*/
 #define	PR_WAIT		6	/* Process is on semaphore queue	*/
 #define	PR_RECTIM	7	/* Process is receiving with timeout	*/
+#define	PR_FRAME	8	/* Process is waiting for available frames	*/
 
 /* Miscellaneous process definitions */
 
@@ -61,6 +63,7 @@ struct procent {					/* Entry in the process table		*/
 	dentry_t 	*pd;				/* Pointer to the dtable entry with the page directory of process */
 	pt_info_t 	*pts;				/* List of dtable entries with the page tables of process */
 	pentry_t	ptable[NPROCPAGE];	/* The per-process virtual address space */
+	uint32		pgf_virt_addr;		/* The address that cause page fault before inserting the framewait queue */
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/

@@ -5,7 +5,7 @@
 /* Default # of queue entries: 1 per process plus 2 for ready list plus	*/
 /*			2 for sleep list plus 2 per semaphore		*/
 #ifndef NQENT
-#define NQENT	(NPROC + 4 + NSEM + NSEM)
+#define NQENT	(NPROC + 6 + NSEM + NSEM)
 #endif
 
 #define	EMPTY	(-1)		/* Null value for qnext or qprev index	*/
@@ -29,7 +29,7 @@ extern	struct qentry	queuetab[];
 #define	isempty(q)	(firstid(q) >= NPROC)
 #define	nonempty(q)	(firstid(q) <  NPROC)
 #define	firstkey(q)	(queuetab[firstid(q)].qkey)
-#define	lastkey(q)	(queuetab[ lastid(q)].qkey)
+#define	lastkey(q)	(queuetab[lastid(q)].qkey)
 
 /* Inline to check queue id assumes interrupts are disabled */
 

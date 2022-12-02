@@ -29,7 +29,7 @@ syscall	kill(
 	for (i=0; i<3; i++) {
 		close(prptr->prdesc[i]);
 	}
-	
+
 	freestk(prptr->prstkbase, prptr->prstklen);
 
 	/* Deallocating paging bookkeping structs */
@@ -41,6 +41,9 @@ syscall	kill(
 	dealloc_dtable_entries(pid);
 	dealloc_e1table_entries(pid);
 	delete_pts(pid);
+	reset_evict_buf();
+	//assign_and_wakeup();
+
 
 	switch (prptr->prstate) {
 	case PR_CURR:

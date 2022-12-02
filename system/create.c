@@ -50,10 +50,11 @@ pid32	create(
 		prptr->ptable[i].eentry = NULL;
 	}
 
+	// Initialize to an invalid address
+	prptr->pgf_virt_addr = 0x0;
+
 	/* Set up the pagging per-process bookkeeping information */
-	if (alloc_dtable_pd(pid) == SYSERR){
-		return SYSERR;
-	}
+	if (alloc_dtable_pd(pid) == SYSERR) return SYSERR;
 	alloc_common_pd(pid);
 
 	prcount++;

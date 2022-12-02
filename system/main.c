@@ -30,7 +30,7 @@ process	main(void)
 */
 
 /* A.1. */
-/**/
+/*
 	char *va = vmhgetmem(1);
 	// Simulate page handler part [begin]
 	//uint32 page_number = get_pte((uint32)va);
@@ -48,7 +48,7 @@ process	main(void)
 	kprintf("Return value: %s\n", ((vmhfreemem(va, 0) == SYSERR) ? "SYSERR" : "OK"));
 	// Should return SYSERR
 	kprintf("Return value: %s\n", ((vmhfreemem(va, -1) == SYSERR) ? "SYSERR" : "OK"));
-/**/	
+*/	
 
 /* A.2. */
 /*
@@ -187,10 +187,34 @@ process	main(void)
 	kprintf("Main [gva]: 0x%x -> %s\n", gva, gva);
 	//print_proc_einfo(currpid);
 */
+
+/* Test segmentation fault */
+/*
+		resume(create(sndA, 1024, 20, "sndA", 0, NULL));
+		kprintf("Continue\n");
+*/
+
+/* Test eviction */
 /**/
-        resume(create(sndA, 1024, 20, "sndA", 0, NULL));
-        kprintf("Continue\n");
+	char *va = vmhgetmem(1024);
+	
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'm';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	//print_e1table();
+	kprintf("[va]: 0x%x -> %s\n", va, va);
+    //print_e2table();
+    //print_proc_einfo(currpid);
+    //kprintf("END\n");
+
+
 /**/
+
 	return OK;
 }
 
@@ -216,8 +240,47 @@ void sndA(void){
 	kprintf("SndA [gva]: 0x%x -> %s\n", gva, gva);
 	//print_proc_einfo(currpid);
 */
+
+/* Test segmentation fault */
+/*
+		*((uint32 *) 0x8FFFF000) = 0x0;
+*/
+
+/* Test eviction */
 /**/
-        *((uint32 *) 0x8FFFF000) = 0x0;
+	char *va = vmhgetmem(1024);
+	
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	resume(create(sndB, 1024, 22, "sndB", 0, NULL));
+	//kprintf("[va]: 0x%x -> %s\n", va, va);
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	vmhfreemem(va, 1);
+	sleep(20);
 /**/
+}
+
+void sndB(void){
+
+	kprintf("SndB\n");
+
+	char *va = vmhgetmem(25);
+	
+	int k;
+	for (k=0; k<24*4096; ++k){
+		va[k] = 'b';
+	}
+	va[k++] = 'x';
+	//kprintf("HERE\n");
+	va[k] = '\0';
+	kprintf("[va]: 0x%x -> %s\n", va, va);
 
 }

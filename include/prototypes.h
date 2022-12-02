@@ -1,11 +1,20 @@
 /* in file main.c */
 extern void sndA(void);
 
+/* in file main.c */
+extern void sndB(void);
+
+/* in file main.c */
+extern void sndC(void);
+
 /* in file vmhgetmem.c */
 extern char *vmhgetmem(uint16);
 
 /* in file vmhfreemem.c */
 extern syscall vmhfreemem(char *, uint16);
+
+/* in file vmhfreemem.c */
+extern void assign_and_wakeup(void);
 
 
 
@@ -73,8 +82,38 @@ extern void print_proc_einfo(pid32);
 
 
 
+/* in file e2table.c */
+void dealloc_e2table_entry(eentry_t *);
+
+/* in file e2table.c */
+status alloc_e2table_entry(pid32, uint32);
+
+/* in file e2table.c */
+eentry_t *new_e2table_entry(pid32, uint32);
+
+/* in file e2table.c */
+eentry_t *get_e2entry(void);
+
+/* in file e2table.c */
+void print_e2table(void);
+
+
+
+
 /* in file ptable.c */
 extern uint32 alloc_ptable_pages(pid32, uint16);
+
+
+
+
+/* in file evict_buffer.c */
+status evict_buf_put(eentry_t *);
+
+/* in file evict_buffer.c */
+eentry_t *evict_buff_get(void);
+
+/* in file evict_buffer.c */
+void reset_evict_buf(void);
 
 
 
@@ -99,6 +138,12 @@ extern uint32 get_p_pte_addr(pid32, uint32);
 
 /* in file paging.c */
 extern void set_p_pte(pid32, uint32, uint32);
+
+/* in file paging.c */
+extern void swap_pages(uint32, uint32);
+
+/* in file paging.c */
+extern void copy_page(uint32, uint32);
 
 /* in file paging.c */
 extern void zero_pd_mem(uint32);
@@ -143,6 +188,18 @@ extern uint32 get_va(uint32);
 extern void pgfhandler(void);
 
 /* in file pgfhandler.c */
+void evict_and_fetch_page(pid32, uint32);
+
+/* in file pgfhandler.c */
+status fetch_page(pid32, uint32);
+
+/* in file pgfhandler.c */
+extern int assign_page(pid32, uint32);
+
+/* in file pgfhandler.c */
+extern status evict(void);
+
+/* in file pgfhandler.c */
 extern int page_not_assigned(pid32, uint32);
 
 /* in file pgfhandler.c */
@@ -152,16 +209,10 @@ extern int access_violation(uint32);
 extern int page_swapped(pid32, uint32);
 
 /* in file pgfhandler.c */
-extern int assign_page(pid32, uint32);
-
-/* in file pgfhandler.c */
 extern uint32 getcr2(void);
 
 /* in file pgfhandler.c */
 extern uint32 getcr3(void);
-
-/* in file pgfhandler.c */
-extern int pde_present(pid32, uint32);
 
 
 

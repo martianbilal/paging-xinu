@@ -23,7 +23,7 @@ struct	memblk	memlist;	/* List of free memory blocks		*/
 
 /* Active system status */
 
-int	prcount;		/* Total number of live processes	*/
+int		prcount;		/* Total number of live processes	*/
 pid32	currpid;		/* ID of currently executing process	*/
 
 bool8   PAGE_SERVER_STATUS;    /* Indicate the status of the page server */
