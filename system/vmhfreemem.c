@@ -11,6 +11,7 @@ syscall vmhfreemem(char *blockaddr, uint16 msize){
 	uint32 start_page = get_pte_num((uint32)blockaddr);
 	uint32 end_page = start_page + msize;
 	if (end_page > 1024) goto ret_error;
+	if (proctab[currpid].ptable[start_page].loc == empty) goto ret_error;
 
 	uint32 cur_page;
 	loc_t loc;

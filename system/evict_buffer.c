@@ -4,6 +4,7 @@ int buf_length = 0;
 int buf_head = 0;
 int buf_tail = 0;
 eentry_t *evict_buf[BUFF_SIZE];
+eentry_t *tmp_buf[BUFF_SIZE];
 
 status evict_buf_put(eentry_t *e1entry){
 
@@ -24,7 +25,7 @@ eentry_t *evict_buf_get(void){
 void reset_evict_buf(void){
 
 	int i, tmp_len;
-	eentry_t *tmp_buf[BUFF_SIZE];
+	
 	for (i = buf_head, tmp_len = 0; i < buf_tail; i++){
 		if (evict_buf[i%BUFF_SIZE]->pid != -1)
 			tmp_buf[tmp_len++] = evict_buf[i%BUFF_SIZE];

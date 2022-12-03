@@ -1,5 +1,7 @@
 #include <xinu.h>
 
+char tmp_page[FRAME_SIZE];
+
 /* Allocate the shared page tables (PT_ABC, PT_DE1, PT_E1E2, PT_E2, PT_G) in the physical memory */
 void alloc_shared_pts(void){
 
@@ -102,7 +104,6 @@ void set_p_pte(pid32 pid, uint32 virt_addr, uint32 phys_addr){
 /* Swap the contents of frames e1 and e2 */
 void swap_pages(uint32 e1_addr, uint32 e2_addr){
 
-	char tmp_page[FRAME_SIZE];
 	uint32 src, dst;
 
 	uint32 e1_max_addr = e1_addr + FRAME_SIZE;

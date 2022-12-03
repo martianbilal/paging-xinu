@@ -42,7 +42,7 @@ syscall	kill(
 	dealloc_e1table_entries(pid);
 	delete_pts(pid);
 	reset_evict_buf();
-	//assign_and_wakeup();
+	assign_and_wakeup();
 
 
 	switch (prptr->prstate) {

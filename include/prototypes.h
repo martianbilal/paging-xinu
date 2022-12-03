@@ -214,6 +214,9 @@ extern uint32 getcr2(void);
 /* in file pgfhandler.c */
 extern uint32 getcr3(void);
 
+/* in file pgfhandler.c */
+extern void printesp(pid32 pid);
+
 
 
 

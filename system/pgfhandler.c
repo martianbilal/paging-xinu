@@ -72,7 +72,7 @@ void pgfhandler()
 			assign_page(currpid, virt_addr); // Cannot be SYSERR since we freed an entry above
 		}else{
 			// There is no space in E2, so process should be sent to sleep queue
-			kprintf("wait for frame\n");
+			//kprintf("wait for frame\n");
 			prptr = &proctab[currpid];
 			prptr->prstate = PR_FRAME;
 			prptr->pgf_virt_addr = virt_addr;
@@ -216,4 +216,11 @@ uint32 getcr3(){
 	uint32 cr3 = 0;
 	asm("movl %%cr3, %0" : "=r"(cr3));
 	return cr3;
+}
+
+void printesp(pid32 pid){
+	uint32 esp = 0;
+	asm("movl %%esp, %0" : "=r"(esp));
+	if (esp<proctab[currpid].prstkbase-proctab[currpid].prstklen)
+		kprintf("PID: %d, SP: 0x%x\n", pid, esp);
 }

@@ -207,7 +207,7 @@ process	main(void)
 
 	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
 	//print_e1table();
-	kprintf("[va]: 0x%x -> %s\n", va, va);
+	//kprintf("[va]: 0x%x -> %s\n", va, va);
     //print_e2table();
     //print_proc_einfo(currpid);
     //kprintf("END\n");

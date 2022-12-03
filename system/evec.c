@@ -210,9 +210,9 @@ void	trap (
 	sp--;
 	kprintf("edi %08X (%u)\n", *sp, *sp);
 	sp--;
-	uint32 ds = 0;
-	asm("movl %%ds, %0" : "=r"(ds));
-	kprintf("0x%x\n", ds);
+	//uint32 ds = 0;
+	//asm("movl %%ds, %0" : "=r"(ds));
+	//kprintf("0x%x\n", ds);
 	//print_e1table();
 	//kprintf("[va]: 0x%x -> %s\n", va, va);
     //print_e2table();
@@ -223,7 +223,7 @@ void	trap (
 	//kprintf("pd: %x\n", proctab[currpid].pd->address);
 	//kprintf("a: %x b: %x\n", proctab[currpid].prstkptr, *(proctab[currpid].prstkptr));
 	//print_mem((uint32 *)0x3E0000, (uint32 *)0x3E9B28);
-	//panic("Trap processing complete...\n");
+	panic("Trap processing complete...\n");
 	restore(mask);
 }
 
