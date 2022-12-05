@@ -8,11 +8,14 @@
  */
 void	wakeup(void)
 {
+	pid32 pid;			/* Stores ID of process to wakeup	*/
 	/* Awaken all processes that have no more time to sleep */
 
 	resched_cntl(DEFER_START);
 	while (nonempty(sleepq) && (firstkey(sleepq) <= 0)) {
-		ready(dequeue(sleepq));
+		pid = dequeue(sleepq);
+		kprintf("wakeup: %d\n", pid);
+		ready(pid);
 	}
 
 	resched_cntl(DEFER_STOP);

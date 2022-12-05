@@ -6,6 +6,8 @@
 extern uint32 pd_n_addr;
 char *gva;
 
+void testE1E2();
+
 process	main(void)
 {
 
@@ -204,7 +206,16 @@ process	main(void)
 	va[k-2] = 'e';
 	va[k-1] = '\0';
 
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+
+	// random stress test :: FAILED
+	resume(create(testE1E2, 1024, 21, "testE1E20", 0, NULL));
+	resume(create(testE1E2, 1024, 21, "testE1E21", 0, NULL));
+	resume(create(testE1E2, 1024, 21, "testE1E22", 0, NULL));
+	resume(create(testE1E2, 1024, 21, "testE1E23", 0, NULL));
+	resume(create(testE1E2, 1024, 21, "testE1E24", 0, NULL));
+	resume(create(testE1E2, 1024, 21, "testE1E25", 0, NULL));
+
 	//print_e1table();
 	//kprintf("[va]: 0x%x -> %s\n", va, va);
     //print_e2table();
@@ -234,6 +245,10 @@ process	main(void)
 	while(1);
 
 /**/
+
+	while(1){
+		
+	}
 
 	return OK;
 }
@@ -305,6 +320,27 @@ void sndA(void){
 /**/
 }
 
+
+void testE1E2(void){
+	// ah! failing this table because all of processes are freed in one go, these process then get  
+	// some of their desired pages without freeing anyone of them resulting in a DEADLOCK where all 
+	// processes are waiting for each other to free their pages
+	kprintf("Test E1E2\n");
+	char *va = vmhgetmem(1024);
+	kprintf("[testE1E2] allocated virtual address space : 0x%x\n", va);
+	
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	kprintf("[testE1E2] filled virtual address space\n");
+	sleep(1);
+	kprintf("[testE1E2] %d: going to free\n", currpid);
+	vmhfreemem(va, 1024);
+	kprintf("done with testE1E2\n");
+}
 void sndB(void){
 
 	kprintf("SndB\n");
@@ -316,8 +352,8 @@ void sndB(void){
 		va[k] = 'b';
 	}
 	va[k++] = 'x';
-	//kprintf("HERE\n");
+	kprintf("HERE\n");
 	va[k] = '\0';
-	kprintf("[va]: 0x%x -> %s\n", va, va);
+	// kprintf("[va]: 0x%x -> %s\n", va, va);
 
 }

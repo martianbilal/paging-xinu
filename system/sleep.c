@@ -37,6 +37,7 @@ syscall	sleepms(
 	}
 
 	/* Delay calling process */
+	kprintf("sleepms: %d\n", currpid);
 
 	if (insertd(currpid, sleepq, delay) == SYSERR) {
 		restore(mask);

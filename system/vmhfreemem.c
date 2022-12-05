@@ -56,7 +56,9 @@ void assign_and_wakeup(void){
 	resched_cntl(DEFER_START);
 	while (nonempty(framewait) && e1table_has_space()) {
 		pid32 deq_pid = dequeue(framewait);
+		kprintf("assign_and_wakeup: deq_pid: %d\n", deq_pid);
 		assign_page(deq_pid, proctab[deq_pid].pgf_virt_addr);
+		kprintf("assign_and_wakeup: deq_pid: %d, pgf_virt_addr: 0x%x\n", deq_pid, proctab[deq_pid].pgf_virt_addr);
 		ready(deq_pid);
 	}
 	resched_cntl(DEFER_STOP);
