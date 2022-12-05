@@ -16,21 +16,25 @@ void dealloc_e1table_entry(eentry_t *eentry){
 
 	eentry->pid = -1;
 	eentry->page_number = -1;
+	used_e1frames--;
 }
 
 /* Searches for an empty entry in e1table, and finds one, it allocates it and updates the per-process ptable */
 status alloc_e1table_entry(pid32 pid, uint32 page_number){
+	
 	eentry_t *e1entry = new_e1table_entry(pid, page_number);
 	if (e1entry == NULL) return SYSERR;
 	if (evict_buf_put(e1entry) == SYSERR) return SYSERR; //added, check is superfluous
 	proctab[pid].ptable[page_number].loc = e1;
 	proctab[pid].ptable[page_number].eentry = e1entry;
+	used_e1frames++;
 	return OK;
 }
 
 /* Searches for an empty entry in e1table, and if finds one, it sets it up */
 eentry_t *new_e1table_entry(pid32 pid, uint32 page_number){
 
+	if (!e1table_has_space()) return NULL;
 	eentry_t *e1entry = get_e1entry();
 	if (e1entry == NULL) return NULL;
 	e1entry->pid = pid;
@@ -46,6 +50,12 @@ eentry_t *get_e1entry(void){
 		if (e1table[i].pid == -1) return &e1table[i];
 	}
 	return NULL;
+}
+
+/* Returns 1 whether there is available space in e2 table */
+int e1table_has_space(void){
+
+	return (used_e1frames < NE1FRAME);
 }
 
 /* Prints the e1table */

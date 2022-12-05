@@ -50,23 +50,15 @@ ret_ok:
 
 }
 
-
+/* Checks whether there are processes in the framewait, allocates them the available E1 frames and readies them */
 void assign_and_wakeup(void){
 
-	//ready(dequeue(framewait));
-
 	resched_cntl(DEFER_START);
-	
-	while (nonempty(framewait) && get_e1entry()!=NULL) {
-		//kprintf("assign_and_wakeup IN\n");
+	while (nonempty(framewait) && e1table_has_space()) {
 		pid32 deq_pid = dequeue(framewait);
 		assign_page(deq_pid, proctab[deq_pid].pgf_virt_addr);
 		ready(deq_pid);
 	}
-	//kprintf("assign_and_wakeup while OUT\n");
 	resched_cntl(DEFER_STOP);
-	//kprintf("assign_and_wakeup OUT\n");
-
-
 	return;
 }

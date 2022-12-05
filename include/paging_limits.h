@@ -17,4 +17,6 @@ extern uint32 a_frames, b_frames, c_frames, d_frames, e1_frames, e2_frames, f_fr
 extern uint32 pd_n_addr;
 extern uint32 pt_a_addr, pt_g_addr, pt_m_addr;
 
+extern int used_e1frames, used_e2frames;
+
 extern qid16 framewait;

@@ -6,6 +6,7 @@ int buf_tail = 0;
 eentry_t *evict_buf[BUFF_SIZE];
 eentry_t *tmp_buf[BUFF_SIZE];
 
+/* Puts a new element into the buffer's tail */
 status evict_buf_put(eentry_t *e1entry){
 
 	if (buf_length == BUFF_SIZE) return SYSERR;
@@ -14,6 +15,7 @@ status evict_buf_put(eentry_t *e1entry){
 	return OK;
 }
 
+/* Pops the buffer's head */
 eentry_t *evict_buf_get(void){
 
 	if (buf_length == 0) return NULL;
@@ -22,6 +24,7 @@ eentry_t *evict_buf_get(void){
 	return e1entry;
 }
 
+/* Reorders the buffer, eliminating the empty elements */
 void reset_evict_buf(void){
 
 	int i, tmp_len;

@@ -21,21 +21,6 @@ void pgfhandler()
 	mask = disable();
 	
 	virt_addr = getcr2();
-	//virt_page_tab = get_pte_num(virt_addr);
-	//virt_page_dir = get_pde_num(virt_addr);
-
-    // kprintf("======= Paging fault handler called ==========\n");
-	//kprintf("error code : 0x%x\n", pferrorcode);
-	// // kprintf("EIP : 0x%x\n", pinstr);
-	// // kprintf("eflags : 0x%x\n", peflags);
-	// // kprintf("cs : 0x%x\n", pcs);
-
-	//kprintf("Virtual address: 0x%x\n", virt_addr);
-	//kprintf("Virtual directory number: 0x%x\n", virt_page_dir);
-	//kprintf("Virtual page table number: 0x%x\n", virt_page_tab);
-	//kprintf("Page exists: %d\n", page_exists(currpid, virt_addr));
-	//kprintf("Access violation: %d\n", access_violation(virt_addr));
-	// kprintf("%s, ", __func__);
 
 	// Check if the page is not assigned (loc == empty)
 	if(page_not_assigned(currpid, virt_addr)){
@@ -60,14 +45,13 @@ void pgfhandler()
 		evict_and_fetch_page(currpid, virt_addr);
 
 	}else{ // Check if the page is assigned but not allocated (loc == vmem) 
-
 		//kprintf("assigned not allocated\n");
 		
 		// There is an available E1 frame
 		if (assign_page(currpid, virt_addr) != SYSERR) goto ret;
 		
 		// There is not an available E1 frame, so eviction is needed
-		if (get_e2entry() != NULL){
+		if (e2table_has_space()){
 			evict();
 			assign_page(currpid, virt_addr); // Cannot be SYSERR since we freed an entry above
 		}else{
@@ -78,9 +62,6 @@ void pgfhandler()
 			prptr->pgf_virt_addr = virt_addr;
 			enqueue(currpid, framewait);
 			resched();
-			//kprintf("y\n");
-			//assign_page(currpid, virt_addr);
-			//kprintf("OUT\n");
 		}
 	}
 
@@ -90,6 +71,7 @@ ret:
 	
 }
 
+/* Evicts a frame from E1 region and fetches in its place a frame from E2 region */
 void evict_and_fetch_page(pid32 pid, uint32 virt_addr){
 
 	uint32 page_number = get_pte_num(virt_addr);
@@ -128,6 +110,7 @@ void evict_and_fetch_page(pid32 pid, uint32 virt_addr){
 	}
 }
 
+/* Fetches in E1 region a frame that was in E2 region */
 status fetch_page(pid32 pid, uint32 virt_addr){
 	
 	uint32 page_number = get_pte_num(virt_addr);	// page number of the virtual address
@@ -141,7 +124,7 @@ status fetch_page(pid32 pid, uint32 virt_addr){
 
 /*
 	assign_page - assign a physical page to the virtual address
-	returns 1 on success, 0 on failure
+	returns OK on success, SYSERR on failure
 */
 status assign_page(pid32 pid, uint32 virt_addr){
 	
@@ -153,6 +136,7 @@ status assign_page(pid32 pid, uint32 virt_addr){
 	return OK;
 }
 
+/* Evicts a frame from the E1 region to the E2 region */
 status evict(){
 
 	// Get the E1 frame that is going to be evicted
@@ -176,7 +160,7 @@ status evict(){
 }
 
 
-//changed
+/* Checks whether the given page is assigned or not by the process */
 int page_not_assigned(pid32 pid, uint32 virt_addr){
 	
 	uint32 page_number = get_pte_num(virt_addr);	// page number of the virtual address
@@ -184,7 +168,7 @@ int page_not_assigned(pid32 pid, uint32 virt_addr){
 	return (loc == empty);
 }
 
-// created
+/* Checks whether the given page resides in the E2 region */
 int page_swapped(pid32 pid, uint32 virt_addr){
 	
 	uint32 page_number = get_pte_num(virt_addr);	// page number of the virtual address
@@ -197,7 +181,7 @@ int page_swapped(pid32 pid, uint32 virt_addr){
 */
 int access_violation(uint32 virt_addr){
 
-	int writable = is_page_writeable(currpid, virt_addr);
+	int writable = is_page_writable(currpid, virt_addr);
 	uint32 access = pferrorcode & 0x2;
 	if(writable == 0 && access == 2)
 		return 1;
@@ -205,6 +189,8 @@ int access_violation(uint32 virt_addr){
 		return 0;
 
 }
+
+/* Debugging funcs */
 
 uint32 getcr2(){
 	uint32 cr2 = 0;

@@ -7,6 +7,9 @@ extern void sndB(void);
 /* in file main.c */
 extern void sndC(void);
 
+
+
+
 /* in file vmhgetmem.c */
 extern char *vmhgetmem(uint16);
 
@@ -74,6 +77,9 @@ extern eentry_t *new_e1table_entry(pid32, uint32);
 extern eentry_t *get_e1entry(void);
 
 /* in file e1table.c */
+extern int e1table_has_space(void);
+
+/* in file e1table.c */
 extern void print_e1table(void);
 
 /* in file e1table.c */
@@ -83,19 +89,22 @@ extern void print_proc_einfo(pid32);
 
 
 /* in file e2table.c */
-void dealloc_e2table_entry(eentry_t *);
+extern void dealloc_e2table_entry(eentry_t *);
 
 /* in file e2table.c */
-status alloc_e2table_entry(pid32, uint32);
+extern status alloc_e2table_entry(pid32, uint32);
 
 /* in file e2table.c */
-eentry_t *new_e2table_entry(pid32, uint32);
+extern eentry_t *new_e2table_entry(pid32, uint32);
 
 /* in file e2table.c */
-eentry_t *get_e2entry(void);
+extern eentry_t *get_e2entry(void);
 
 /* in file e2table.c */
-void print_e2table(void);
+extern int e2table_has_space(void);
+
+/* in file e2table.c */
+extern void print_e2table(void);
 
 
 
@@ -107,13 +116,13 @@ extern uint32 alloc_ptable_pages(pid32, uint16);
 
 
 /* in file evict_buffer.c */
-status evict_buf_put(eentry_t *);
+extern status evict_buf_put(eentry_t *);
 
 /* in file evict_buffer.c */
-eentry_t *evict_buff_get(void);
+extern eentry_t *evict_buff_get(void);
 
 /* in file evict_buffer.c */
-void reset_evict_buf(void);
+extern void reset_evict_buf(void);
 
 
 
@@ -158,7 +167,7 @@ extern void zero_p_mem(uint32);
 extern void enable_paging(void);
 
 /* in file paging.c */
-extern int is_page_writeable(pid32, uint32);
+extern int is_page_writable(pid32, uint32);
 
 /* in file paging.c */
 extern int page_exists(pid32, uint32);
@@ -188,10 +197,10 @@ extern uint32 get_va(uint32);
 extern void pgfhandler(void);
 
 /* in file pgfhandler.c */
-void evict_and_fetch_page(pid32, uint32);
+extern void evict_and_fetch_page(pid32, uint32);
 
 /* in file pgfhandler.c */
-status fetch_page(pid32, uint32);
+extern status fetch_page(pid32, uint32);
 
 /* in file pgfhandler.c */
 extern int assign_page(pid32, uint32);

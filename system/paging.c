@@ -122,7 +122,7 @@ void swap_pages(uint32 e1_addr, uint32 e2_addr){
 		*((char *)dst) = tmp_page[src];
 }
 
-// dst <- src
+/* Copies the frame starting from src_addr, to the frame starting from dst_addr */
 void copy_page(uint32 dst_addr, uint32 src_addr){
 	
 	uint32 src, dst;
@@ -130,9 +130,7 @@ void copy_page(uint32 dst_addr, uint32 src_addr){
 
 	for (dst = dst_addr, src = src_addr; src < src_max_addr; src++, dst++)
 		*((char *)dst) = *((char *)src);
-
 }
-
 
 /* Set to zero all the memory allocated for the given pd */
 void zero_pd_mem(uint32 pd_addr){
@@ -169,7 +167,7 @@ void enable_paging(void){
 	asm("movl %eax, %cr0");
 }
 
-//changed, or using bookkeeping structs?
+/* Checks whether a page exists in the memory based on its pte */
 int page_exists(pid32 pid, uint32 virt_addr){
 
 	uint32 pte = *((uint32 *) get_p_pte_addr(pid, virt_addr));
@@ -178,8 +176,8 @@ int page_exists(pid32 pid, uint32 virt_addr){
 	return (pte&0x1);
 }
 
-//changed
-int is_page_writeable(pid32 pid, uint32 virt_addr){
+/* Checks whether a page is writable */
+int is_page_writable(pid32 pid, uint32 virt_addr){
 
 	uint32 pte = *((uint32 *) get_p_pte_addr(pid, virt_addr));
 

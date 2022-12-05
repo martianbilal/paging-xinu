@@ -69,13 +69,12 @@ process	main(void)
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0xFFFFFF, 1) == SYSERR) ? "SYSERR" : "OK"));
 	// Should return SYSERR since exceeding the upper bound
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0x1400000, 1) == SYSERR) ? "SYSERR" : "OK"));
-	// Should return OK (1 byte before the upper bound)
+	// Should return SYSERR (not allocated page)
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0x13FFFFF, 1) == SYSERR) ? "SYSERR" : "OK"));
 */
 
 /* A.3. */
 /*
-
 	kprintf("Return value: %s\n", ((vmhfreemem((char *)0x1000000, 1) == SYSERR) ? "SYSERR" : "OK"));
 */
 
@@ -195,7 +194,7 @@ process	main(void)
 */
 
 /* Test eviction */
-/**/
+/*
 	char *va = vmhgetmem(1024);
 	
 	int k;
@@ -212,6 +211,27 @@ process	main(void)
     //print_proc_einfo(currpid);
     //kprintf("END\n");
 
+
+*/
+
+/* Test deadlock */
+/**/
+	char *va = vmhgetmem(1024);
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'm';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	print_e1table();
+	print_e2table();
+	while(1);
 
 /**/
 
@@ -247,7 +267,7 @@ void sndA(void){
 */
 
 /* Test eviction */
-/**/
+/*
 	char *va = vmhgetmem(1024);
 	
 	int k;
@@ -265,6 +285,23 @@ void sndA(void){
 	va[k-1] = '\0';
 	vmhfreemem(va, 1);
 	sleep(20);
+*/
+
+/* Test deadlock */
+/**/
+
+	char *va = vmhgetmem(1024);
+	
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	sleep(1);
+	vmhfreemem(va, 1024);
+	kprintf("done with testE1E2\n");
+
 /**/
 }
 
