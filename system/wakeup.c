@@ -14,7 +14,7 @@ void	wakeup(void)
 	resched_cntl(DEFER_START);
 	while (nonempty(sleepq) && (firstkey(sleepq) <= 0)) {
 		pid = dequeue(sleepq);
-		kprintf("wakeup: %d\n", pid);
+		//kprintf("wakeup: %d\n", pid);
 		ready(pid);
 	}
 
