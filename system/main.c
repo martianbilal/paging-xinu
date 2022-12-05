@@ -290,7 +290,7 @@ void testE1E2(void){
 	// processes are waiting for each other to free their pages
 	kprintf("Test E1E2\n");
 	char *va = vmhgetmem(1024);
-	kprintf("[testE1E2] allocated virtual address space\n");
+	kprintf("[testE1E2] allocated virtual address space : 0x%x\n", va);
 	
 	int k;
 	for (k=0; k<1024*4096; ++k){
@@ -300,7 +300,7 @@ void testE1E2(void){
 	va[k-1] = '\0';
 	kprintf("[testE1E2] filled virtual address space\n");
 	sleep(1);
-	kprintf("[testE1E2] going to free\n");
+	kprintf("[testE1E2] %d: going to free\n", currpid);
 	vmhfreemem(va, 1024);
 	kprintf("done with testE1E2\n");
 }
