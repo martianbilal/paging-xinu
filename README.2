@@ -1,0 +1,76 @@
+These are the new functions and there explanations: 
+
+
+
+void assign_and_wakeup(void)
+- Checks whether there are processes in the framewait, allocates them the available E1 frames and readies them
+
+
+void dealloc_e2table_entry(eentry_t *)
+- Deallocates the given eentry
+
+
+status alloc_e2table_entry(pid32, uint32)
+- earches for an empty entry in e2table, and finds one, it allocates it and updates the per-process ptable
+
+
+eentry_t *new_e2table_entry(pid32, uint32)
+- Searches for an empty entry in e2table, and if finds one, it sets it up
+
+
+
+eentry_t *get_e2entry(void)
+- Returns a pointer to an empty entry in e1table or NULL if all are occupied
+
+
+
+int e2table_has_space(void)
+- Returns 1 whether there is available space in e2 table 
+
+
+
+void print_e2table(void)
+- Prints the e2table
+
+
+status evict_buf_put(eentry_t *)
+- Puts a new element into the buffer's tail
+
+
+eentry_t *evict_buff_get(void)
+- Pops the buffer's head 
+
+
+void reset_evict_buf(void)
+- Reorders the buffer, eliminating the empty elements
+
+
+void swap_pages(uint32, uint32)
+- Swap the contents of frames e1 and e2 
+
+
+void copy_page(uint32, uint32)
+- Copies the frame starting from src_addr, to the frame starting from dst_addr
+
+
+
+void evict_and_fetch_page(pid32, uint32)
+- Evicts a frame from E1 region and fetches in its place a frame from E2 region
+
+
+status fetch_page(pid32, uint32)
+- Fetches in E1 region a frame that was in E2 region
+
+
+int assign_page(pid32, uint32)
+- assign a physical page to the virtual address
+returns OK on success, SYSERR on failure
+
+
+status evict(void)
+- Evicts a frame from the E1 region to the E2 region
+
+
+
+void printesp(pid32 pid)
+- prints the esp register and logs the pid
