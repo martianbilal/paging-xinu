@@ -8,6 +8,9 @@ char *gva;
 
 void testE1E2();
 
+void firstOne();
+void secondOne();
+
 process	main(void)
 {
 
@@ -227,24 +230,31 @@ process	main(void)
 
 /* Test deadlock */
 /**/
-	char *va = vmhgetmem(1024);
-	int k;
-	for (k=0; k<1024*4096; ++k){
-		va[k] = 'm';
-	}
-	va[k-2] = 'e';
-	va[k-1] = '\0';
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	resume(create(sndA, 1024, 21, "sndA", 0, NULL));
-	print_e1table();
-	print_e2table();
-	while(1);
+	// char *va = vmhgetmem(1024);
+	// int k;
+	// for (k=0; k<1024*4096; ++k){
+	// 	va[k] = 'm';
+	// }
+	// va[k-2] = 'e';
+	// va[k-1] = '\0';
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// resume(create(sndA, 1024, 21, "sndA", 0, NULL));
+	// print_e1table();
+	// print_e2table();
+	// while(1);
 
 /**/
+
+/* Test e1, e2 fill up followed by full emptying */
+
+	resume(create(firstOne, 1024, 21, "firstOne", 0, NULL));
+	resume(create(firstOne, 1024, 21, "firstOne", 0, NULL));
+	resume(create(firstOne, 1024, 21, "firstOne", 0, NULL));
+	resume(create(secondOne, 1024, 22, "secondOne", 0, NULL));
 
 	while(1){
 		
@@ -356,4 +366,47 @@ void sndB(void){
 	va[k] = '\0';
 	// kprintf("[va]: 0x%x -> %s\n", va, va);
 
+}
+
+void firstOne(void){
+	// get everything in E1
+	// get everything in E2
+	kprintf("Test firstOne\n");
+	char *va = vmhgetmem(1024);
+	kprintf("[firstone] allocated virtual address space : 0x%x\n", va);
+	
+	int k;
+	for (k=0; k<(1024)*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	kprintf("[firstone] filled virtual address space\n");
+	sleep(1);
+	kprintf("[firstone] %d: going to free\n", currpid);
+	vmhfreemem(va, 1024);
+	sleep(1);
+	vmhfreemem(va, 1024);
+	sleep(1);
+	vmhfreemem(va, 24);
+	
+}
+
+void secondOne(void){
+	// get everything in E1
+	kprintf("Test secondOne\n");
+	char *va = vmhgetmem(1024);
+	kprintf("[secondOne] allocated virtual address space : 0x%x\n", va);
+	
+	int k;
+	for (k=0; k<1024*4096; ++k){
+		va[k] = 'a';
+	}
+	va[k-2] = 'e';
+	va[k-1] = '\0';
+	kprintf("[secondOne] filled virtual address space\n");
+	sleep(1);
+	kprintf("[secondOne] %d: going to free\n", currpid);
+	vmhfreemem(va, 1024);
+	
 }

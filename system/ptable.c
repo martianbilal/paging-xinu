@@ -6,6 +6,9 @@ uint32 alloc_ptable_pages(pid32 pid, uint16 num){
 	struct	procent	*prptr;
 	int i, j, counter, page_number;
 
+
+	// kprintf("MSIZE : %d alloc_ptable_pages: pid=%d num=%d\n", MAXHSIZE, pid, num);
+
 	if (num < 1 || num > MAXHSIZE) return SYSERR;
 
 	prptr = &proctab[pid];
